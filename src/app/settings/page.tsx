@@ -1,0 +1,171 @@
+'use client';
+
+import { useState, useEffect } from 'react';
+import { AppState } from '@/types';
+import { getStateFromURL, updateURL } from '@/utils/urlState';
+import Link from 'next/link';
+
+export default function SettingsPage() {
+  const [appState, setAppState] = useState<AppState>({
+    teamMembers: [],
+    selectedWinner: null,
+    isSelecting: false,
+  });
+  const [showCopied, setShowCopied] = useState(false);
+
+  // Load state from URL on mount
+  useEffect(() => {
+    const urlState = getStateFromURL();
+    if (urlState) {
+      setAppState(prev => ({
+        ...prev,
+        teamMembers: urlState.teamMembers,
+      }));
+    }
+  }, []);
+
+  const handleShare = async () => {
+    // Update URL with current state
+    updateURL(appState);
+    
+    // Copy current URL to clipboard
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+      setShowCopied(true);
+      setTimeout(() => setShowCopied(false), 2000);
+    } catch (error) {
+      console.error('Failed to copy to clipboard:', error);
+      // Fallback: select the URL
+      const urlInput = document.createElement('input');
+      urlInput.value = window.location.href;
+      document.body.appendChild(urlInput);
+      urlInput.select();
+      document.execCommand('copy');
+      document.body.removeChild(urlInput);
+      setShowCopied(true);
+      setTimeout(() => setShowCopied(false), 2000);
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      {/* Header */}
+      <header className="bg-white shadow-sm border-b border-gray-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center py-6">
+            <div className="flex items-center gap-4">
+              <Link href="/" className="text-blue-600 hover:text-blue-700 font-medium">
+                ← Back to Stand Up
+              </Link>
+              <div>
+                <h1 className="text-3xl font-bold text-gray-900">Settings</h1>
+                <p className="text-gray-600 mt-1">Configure your Daily Stand Up Tracker</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      {/* Main Content */}
+      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="space-y-8">
+          {/* Share Configuration */}
+          <div className="card">
+            <h2 className="text-xl font-semibold text-gray-800 mb-4">Share Configuration</h2>
+            
+            <div className="space-y-4">
+              <div>
+                <h3 className="text-lg font-medium text-gray-700 mb-2">Share Link</h3>
+                <p className="text-gray-600 text-sm mb-3">
+                  Share your current team configuration with others. The link will include all team members and their settings.
+                </p>
+                <button
+                  onClick={handleShare}
+                  className="btn-primary w-full"
+                >
+                  {showCopied ? (
+                    <span className="flex items-center justify-center gap-2">
+                      <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                      </svg>
+                      Copied!
+                    </span>
+                  ) : (
+                    <span className="flex items-center justify-center gap-2">
+                      <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M15 8a3 3 0 10-2.977-2.63l-4.94 2.47a3 3 0 100 4.319l4.94 2.47a3 3 0 10.895-1.789l-4.94-2.47a3.027 3.027 0 000-.74l4.94-2.47C13.456 7.68 14.19 8 15 8z" />
+                      </svg>
+                      Copy Share Link
+                    </span>
+                  )}
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* About Section */}
+          <div className="card">
+            <h2 className="text-xl font-semibold text-gray-800 mb-4">About</h2>
+            
+            <div className="space-y-4">
+              <div>
+                <h3 className="text-lg font-medium text-gray-700 mb-2">Daily Stand Up Tracker</h3>
+                <p className="text-gray-600 text-sm">
+                  Daily Stand Up Tracker (DSUT) is a web-based tool for managing daily stand up meetings. 
+                  All data is stored locally in the URL, making it easy to share configurations with your team.
+                </p>
+              </div>
+
+              <div className="border-t pt-4">
+                <h3 className="text-lg font-medium text-gray-700 mb-2">Features</h3>
+                <ul className="text-gray-600 text-sm space-y-1">
+                  <li>• Add, edit, and remove team members</li>
+                  <li>• Enable/disable team members for selection</li>
+                  <li>• Random name selection with animations</li>
+                  <li>• Share configurations via URL</li>
+                  <li>• Responsive design for all devices</li>
+                  <li>• Track blockers and updates for each team member</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          {/* Technical Information */}
+          <div className="card">
+            <h2 className="text-xl font-semibold text-gray-800 mb-4">Technical Information</h2>
+            
+            <div className="space-y-4">
+              <div>
+                <h3 className="text-lg font-medium text-gray-700 mb-2">Built With</h3>
+                <ul className="text-gray-600 text-sm space-y-1">
+                  <li>• Next.js 15.0.0</li>
+                  <li>• React 18.3.1</li>
+                  <li>• TypeScript 5.3.3</li>
+                  <li>• TailwindCSS 3.4.1</li>
+                </ul>
+              </div>
+
+              <div className="border-t pt-4">
+                <h3 className="text-lg font-medium text-gray-700 mb-2">Data Storage</h3>
+                <p className="text-gray-600 text-sm">
+                  All team member data and configurations are stored locally in the URL using base64 encoding. 
+                  This ensures no server-side storage is required and makes sharing configurations simple and secure.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+
+      {/* Footer */}
+      <footer className="bg-white border-t border-gray-200 mt-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+          <div className="text-center text-gray-500 text-sm">
+            <p>Daily Stand Up Tracker - Built with Next.js and TailwindCSS</p>
+            <p className="mt-1">All data is stored locally in the URL for easy sharing</p>
+          </div>
+        </div>
+      </footer>
+    </div>
+  );
+}
