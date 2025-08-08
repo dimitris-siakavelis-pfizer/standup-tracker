@@ -14,6 +14,7 @@ export default function Home() {
     selectedWinner: null,
     isSelecting: false,
   });
+  const [blinkingMembers, setBlinkingMembers] = useState<Set<string>>(new Set());
 
   // Load state from URL on mount
   useEffect(() => {
@@ -74,6 +75,12 @@ export default function Home() {
           : member
       ),
     }));
+    
+    // Add flashy animation for the winner
+    setBlinkingMembers(new Set([winner.id]));
+    setTimeout(() => {
+      setBlinkingMembers(new Set());
+    }, 1500);
   };
 
   const clearWinner = () => {
@@ -149,6 +156,8 @@ export default function Home() {
             <TeamUpdates
               teamMembers={appState.teamMembers}
               onUpdateMember={updateMember}
+              blinkingMembers={blinkingMembers}
+              setBlinkingMembers={setBlinkingMembers}
             />
           </div>
         </div>
@@ -171,6 +180,8 @@ export default function Home() {
           <TeamUpdates
             teamMembers={appState.teamMembers}
             onUpdateMember={updateMember}
+            blinkingMembers={blinkingMembers}
+            setBlinkingMembers={setBlinkingMembers}
           />
         </div>
       </main>

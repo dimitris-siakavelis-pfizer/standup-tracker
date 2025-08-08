@@ -86,14 +86,14 @@ export default function RandomSelector({
       <div className="mb-6">
         {selectedWinner ? (
           <div className="text-center">
-            <div className="winner-display mb-4">
+            <div className="text-2xl md:text-4xl lg:text-5xl font-bold text-center py-6 px-4 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent break-words">
               {displayName}
             </div>
             <p className="text-gray-600 mb-4">Selected for today's stand up!</p>
           </div>
         ) : isSelecting ? (
           <div className="text-center">
-            <div className="text-4xl md:text-6xl font-bold text-center py-8 px-4 text-blue-600 animate-pulse">
+            <div className="text-2xl md:text-4xl lg:text-5xl font-bold text-center py-6 px-4 text-blue-600 animate-pulse break-words">
               {displayName || 'Selecting...'}
             </div>
             <p className="text-gray-600 mb-4">Selecting a team member...</p>
@@ -106,7 +106,7 @@ export default function RandomSelector({
           </div>
         ) : (
           <div className="text-center">
-            <div className="text-4xl md:text-6xl font-bold text-center py-8 px-4 text-gray-400">
+            <div className="text-2xl md:text-4xl lg:text-5xl font-bold text-center py-6 px-4 text-gray-400 break-words">
               No Selection
             </div>
             <p className="text-gray-600 mb-4">Click Start to select a team member</p>
