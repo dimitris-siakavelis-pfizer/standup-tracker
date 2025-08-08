@@ -51,19 +51,6 @@ export default function RandomSelector({
     }, 3000);
   };
 
-  const stopSelection = () => {
-    if (animationInterval) {
-      clearInterval(animationInterval);
-      setAnimationInterval(null);
-    }
-    
-    if (enabledMembers.length > 0) {
-      const winner = enabledMembers[Math.floor(Math.random() * enabledMembers.length)];
-      onStopSelection(winner);
-      setDisplayName(winner.name);
-    }
-  };
-
   useEffect(() => {
     if (selectedWinner) {
       setDisplayName(selectedWinner.name);
@@ -97,12 +84,6 @@ export default function RandomSelector({
               {displayName || 'Selecting...'}
             </div>
             <p className="text-gray-600 mb-4">Selecting a team member...</p>
-            <button
-              onClick={stopSelection}
-              className="btn-danger"
-            >
-              Stop Selection
-            </button>
           </div>
         ) : (
           <div className="text-center">
