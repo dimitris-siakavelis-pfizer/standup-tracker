@@ -53,11 +53,13 @@ export default function Home() {
     setAppState(prev => ({
       ...prev,
       isSelecting: true,
-      teamMembers: prev.teamMembers.map(member => ({
-        ...member,
-        updateGiven: false,
-        blocker: undefined,
-      })),
+      teamMembers: prev.teamMembers
+        .map(member => ({
+          ...member,
+          updateGiven: false,
+          blocker: undefined,
+        }))
+        .sort(() => Math.random() - 0.5), // Randomize the order
     }));
   };
 
