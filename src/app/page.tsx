@@ -56,6 +56,7 @@ export default function Home() {
       teamMembers: prev.teamMembers.map(member => ({
         ...member,
         updateGiven: false,
+        blocker: undefined,
       })),
     }));
   };

@@ -45,7 +45,7 @@ export default function TeamUpdates({ teamMembers, onUpdateMember }: TeamUpdates
           {enabledMembers.map((member) => (
             <div 
               key={member.id} 
-              className={`border border-gray-200 rounded-lg p-4 transition-colors duration-200 cursor-pointer ${
+              className={`border border-gray-200 rounded-md p-3 transition-colors duration-200 cursor-pointer hover:bg-gray-50 ${
                 member.updateGiven 
                   ? 'bg-green-50 border-green-200' 
                   : 'bg-white'
@@ -53,24 +53,16 @@ export default function TeamUpdates({ teamMembers, onUpdateMember }: TeamUpdates
               onClick={() => handleCardClick(member.id, member.updateGiven || false)}
             >
               <div className="flex items-center gap-3">
-                <h3 className={`font-medium min-w-0 flex-shrink-0 ${
-                  member.updateGiven ? 'text-green-800' : 'text-gray-900'
-                }`}>
-                  {member.name}
-                </h3>
+                <div className={`w-2 h-2 rounded-full flex-shrink-0 ${
+                  member.updateGiven ? 'bg-green-500' : 'bg-gray-300'
+                }`}></div>
                 
-                <div className="flex items-center gap-2">
-                  <label className={`flex items-center gap-2 text-sm ${
-                    member.updateGiven ? 'text-green-700' : 'text-gray-600'
+                <div className="w-24 flex-shrink-0">
+                  <h3 className={`font-medium text-sm truncate ${
+                    member.updateGiven ? 'text-green-800' : 'text-gray-900'
                   }`}>
-                    <input
-                      type="checkbox"
-                      checked={member.updateGiven || false}
-                      onChange={(e) => handleUpdateGivenChange(member.id, e.target.checked)}
-                      className="w-4 h-4 text-green-600 border-gray-300 rounded focus:ring-green-500"
-                    />
-                    Update Given
-                  </label>
+                    {member.name}
+                  </h3>
                 </div>
                 
                 <div onClick={handleBlockerClick} className="flex-1">
@@ -79,7 +71,7 @@ export default function TeamUpdates({ teamMembers, onUpdateMember }: TeamUpdates
                     value={member.blocker || ''}
                     onChange={(e) => handleBlockerChange(member.id, e.target.value)}
                     placeholder="blockers"
-                    className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                    className={`w-full px-2 py-1 border rounded text-xs focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent ${
                       member.updateGiven 
                         ? 'border-green-300 bg-green-50 text-green-900 placeholder-green-500' 
                         : 'border-gray-300'
