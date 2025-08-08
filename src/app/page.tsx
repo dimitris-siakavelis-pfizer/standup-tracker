@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { TeamMember, AppState } from '@/types';
-import { getStateFromURL, updateURL, getURLWithState } from '@/utils/urlState';
+import { getStateFromURL, updateURL, getURLWithState, encodeState } from '@/utils/urlState';
 import NameList from '@/components/NameList';
 import RandomSelector from '@/components/RandomSelector';
 import TeamUpdates from '@/components/TeamUpdates';
@@ -100,7 +100,7 @@ export default function Home() {
                 {appState.teamMembers.length} team members
               </div>
               <Link 
-                href={getURLWithState('/settings', appState)}
+                href={`/settings?state=${encodeState(appState)}`}
                 className="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 font-medium text-sm"
               >
                 Settings

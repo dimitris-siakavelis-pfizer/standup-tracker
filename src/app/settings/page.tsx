@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { AppState } from '@/types';
-import { getStateFromURL, updateURL, getURLWithState } from '@/utils/urlState';
+import { getStateFromURL, updateURL, getURLWithState, encodeState } from '@/utils/urlState';
 import ThemeToggle from '@/components/ThemeToggle';
 import Link from 'next/link';
 export default function SettingsPage() {
@@ -62,7 +62,7 @@ export default function SettingsPage() {
           <div className="flex justify-between items-center py-6">
             <div className="flex items-center gap-4">
               <Link 
-                href={getURLWithState('/', appState)}
+                href={`/?state=${encodeState(appState)}`}
                 className="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 font-medium"
               >
                 ← Back to Stand Up
