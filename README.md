@@ -81,6 +81,38 @@ npm run dev
 - `npm run build` - Build for production
 - `npm run start` - Start production server
 - `npm run lint` - Run ESLint
+- `npm run export` - Build static export for deployment
+- `npm run deploy` - Build and prepare for GitHub Pages deployment
+
+## Deployment
+
+### GitHub Pages
+
+This app is configured for automatic deployment to GitHub Pages. The deployment process is handled by GitHub Actions.
+
+#### Setup Instructions:
+
+1. **Update the homepage URL** in `package.json`:
+   - Replace `[your-github-username]` with your actual GitHub username
+   - The URL should be: `https://[your-github-username].github.io/standup-tracker`
+
+2. **Enable GitHub Pages** in your repository:
+   - Go to your repository Settings
+   - Navigate to "Pages" section
+   - Set source to "GitHub Actions"
+
+3. **Push to main branch**:
+   - The GitHub Actions workflow will automatically build and deploy your app
+   - Your app will be available at the homepage URL
+
+#### Manual Deployment:
+
+If you prefer manual deployment, you can run:
+```bash
+npm run deploy
+```
+
+This will build the static files and create the necessary `.nojekyll` file for GitHub Pages.
 
 ## Usage
 

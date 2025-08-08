@@ -2,11 +2,14 @@
   "name": "standup-tracker",
   "version": "0.1.0",
   "private": true,
+  "homepage": "https://dimitris-siakavelis-pfizer.github.io/standup-tracker",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "export": "next build",
+    "deploy": "npm run export && touch out/.nojekyll"
   },
   "dependencies": {
     "next": "15.0.0",
