@@ -24,17 +24,6 @@ export default function ThemeToggle() {
         </svg>
       </div>
 
-      {/* Moon icon for dark mode */}
-      <div className={`absolute right-1 top-1/2 -translate-y-1/2 transition-all duration-200 ${
-        theme === 'dark' 
-          ? 'opacity-100 translate-x-0' 
-          : 'opacity-0 translate-x-2'
-      }`}>
-        <svg className="h-6 w-6 text-blue-400" fill="currentColor" viewBox="0 0 20 20">
-          <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" />
-        </svg>
-      </div>
-
       {/* Toggle switch */}
       <span className={`inline-block h-8 w-8 transform rounded-full bg-white dark:bg-gray-800 shadow-lg transition-transform duration-200 ${
         theme === 'dark' ? 'translate-x-10' : 'translate-x-1'
