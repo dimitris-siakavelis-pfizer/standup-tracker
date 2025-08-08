@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { AppState } from '@/types';
-import { getStateFromURL, updateURL, getURLWithState, encodeState } from '@/utils/urlState';
+import { getStateFromURL, updateURL, encodeState } from '@/utils/urlState';
 import ThemeToggle from '@/components/ThemeToggle';
 import Link from 'next/link';
 export default function SettingsPage() {

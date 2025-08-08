@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { TeamMember, AppState } from '@/types';
-import { getStateFromURL, updateURL, getURLWithState, encodeState } from '@/utils/urlState';
+import { getStateFromURL, updateURL, encodeState } from '@/utils/urlState';
 import NameList from '@/components/NameList';
 import RandomSelector from '@/components/RandomSelector';
 import TeamUpdates from '@/components/TeamUpdates';
