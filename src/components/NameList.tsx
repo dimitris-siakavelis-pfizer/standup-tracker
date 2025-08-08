@@ -6,10 +6,9 @@ import { TeamMember } from '@/types';
 interface NameListProps {
   teamMembers: TeamMember[];
   onUpdateMembers: (members: TeamMember[]) => void;
-  onClearAll: () => void;
 }
 
-export default function NameList({ teamMembers, onUpdateMembers, onClearAll }: NameListProps) {
+export default function NameList({ teamMembers, onUpdateMembers }: NameListProps) {
   const [newName, setNewName] = useState('');
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editingName, setEditingName] = useState('');
@@ -24,6 +23,18 @@ export default function NameList({ teamMembers, onUpdateMembers, onClearAll }: N
       onUpdateMembers([...teamMembers, newMember]);
       setNewName('');
     }
+  };
+
+  const enableAll = () => {
+    onUpdateMembers(
+      teamMembers.map(member => ({ ...member, enabled: true }))
+    );
+  };
+
+  const disableAll = () => {
+    onUpdateMembers(
+      teamMembers.map(member => ({ ...member, enabled: false }))
+    );
   };
 
   const removeMember = (id: string) => {
@@ -76,12 +87,22 @@ export default function NameList({ teamMembers, onUpdateMembers, onClearAll }: N
     <div className="card">
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-xl font-semibold text-gray-800">Team Members</h2>
-        <button
-          onClick={onClearAll}
-          className="btn-secondary text-sm"
-        >
-          Clear All
-        </button>
+        <div className="flex gap-2">
+          <button
+            onClick={enableAll}
+            disabled={teamMembers.length === 0}
+            className="btn-secondary text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Enable All
+          </button>
+          <button
+            onClick={disableAll}
+            disabled={teamMembers.length === 0}
+            className="btn-secondary text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Disable All
+          </button>
+        </div>
       </div>
 
       {/* Add new member */}
@@ -111,7 +132,14 @@ export default function NameList({ teamMembers, onUpdateMembers, onClearAll }: N
           teamMembers.map((member) => (
             <div
               key={member.id}
-              className={`name-item ${!member.enabled ? 'disabled' : ''}`}
+              className={`name-item ${!member.enabled ? 'disabled' : ''} cursor-pointer`}
+              onClick={(e) => {
+                // Don't toggle if clicking on buttons or input fields
+                if (!(e.target as HTMLElement).closest('button') && 
+                    !(e.target as HTMLElement).closest('input')) {
+                  toggleMember(member.id);
+                }
+              }}
             >
               <div className="flex items-center gap-3 flex-1">
                 <button
