@@ -18,6 +18,8 @@ export function decodeState(encoded: string): ShareData | null {
 }
 
 export function updateURL(state: AppState) {
+  if (typeof window === 'undefined') return;
+  
   const encoded = encodeState(state);
   const url = new URL(window.location.href);
   url.searchParams.set('state', encoded);
@@ -25,6 +27,8 @@ export function updateURL(state: AppState) {
 }
 
 export function getURLWithState(path: string, state: AppState): string {
+  if (typeof window === 'undefined') return path;
+  
   const encoded = encodeState(state);
   const url = new URL(path, window.location.origin);
   url.searchParams.set('state', encoded);

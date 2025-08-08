@@ -7,10 +7,7 @@ import NameList from '@/components/NameList';
 import RandomSelector from '@/components/RandomSelector';
 import TeamUpdates from '@/components/TeamUpdates';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-
 export default function Home() {
-  const router = useRouter();
   const [appState, setAppState] = useState<AppState>({
     teamMembers: [],
     selectedWinner: null,
@@ -34,7 +31,7 @@ export default function Home() {
     if (appState.teamMembers.length > 0) {
       updateURL(appState);
     }
-  }, [appState.teamMembers]);
+  }, [appState]);
 
   const updateTeamMembers = (members: TeamMember[]) => {
     setAppState(prev => ({
@@ -84,28 +81,9 @@ export default function Home() {
     }, 1500);
   };
 
-  const clearWinner = () => {
-    setAppState(prev => ({
-      ...prev,
-      selectedWinner: null,
-      teamMembers: prev.teamMembers.map(member => ({
-        ...member,
-        updateGiven: false,
-      })),
-    }));
-  };
 
-  const clearAll = () => {
-    setAppState(prev => ({
-      ...prev,
-      selectedWinner: null,
-      teamMembers: prev.teamMembers.map(member => ({
-        ...member,
-        blocker: undefined,
-        updateGiven: false,
-      })),
-    }));
-  };
+
+
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
@@ -115,7 +93,7 @@ export default function Home() {
           <div className="flex justify-between items-center py-6">
             <div>
               <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Daily Stand Up Tracker</h1>
-              <p className="text-gray-600 dark:text-gray-300 mt-1">Manage your team's daily stand up meetings</p>
+              <p className="text-gray-600 dark:text-gray-300 mt-1">Manage your team&apos;s daily stand up meetings</p>
             </div>
             <div className="flex items-center space-x-4">
               <div className="text-sm text-gray-500 dark:text-gray-400">
@@ -143,7 +121,6 @@ export default function Home() {
               isSelecting={appState.isSelecting}
               onStartSelection={startSelection}
               onStopSelection={stopSelection}
-              onClearWinner={clearWinner}
             />
             <NameList
               teamMembers={appState.teamMembers}
@@ -170,7 +147,6 @@ export default function Home() {
             isSelecting={appState.isSelecting}
             onStartSelection={startSelection}
             onStopSelection={stopSelection}
-            onClearWinner={clearWinner}
           />
           <NameList
             teamMembers={appState.teamMembers}

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+
 import { TeamMember } from '@/types';
 
 interface TeamUpdatesProps {
@@ -18,9 +18,7 @@ export default function TeamUpdates({ teamMembers, onUpdateMember, blinkingMembe
     onUpdateMember(id, { blocker });
   };
 
-  const handleUpdateGivenChange = (id: string, updateGiven: boolean) => {
-    onUpdateMember(id, { updateGiven });
-  };
+
 
   const handleCardClick = (id: string, currentUpdateGiven: boolean) => {
     const newUpdateGiven = !currentUpdateGiven;

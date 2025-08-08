@@ -9,7 +9,6 @@ interface RandomSelectorProps {
   isSelecting: boolean;
   onStartSelection: () => void;
   onStopSelection: (winner: TeamMember) => void;
-  onClearWinner: () => void;
 }
 
 export default function RandomSelector({
@@ -18,7 +17,6 @@ export default function RandomSelector({
   isSelecting,
   onStartSelection,
   onStopSelection,
-  onClearWinner,
 }: RandomSelectorProps) {
   const [displayName, setDisplayName] = useState<string>('');
   const [animationInterval, setAnimationInterval] = useState<NodeJS.Timeout | null>(null);
@@ -76,7 +74,7 @@ export default function RandomSelector({
             <div className="winner-display">
               {displayName}
             </div>
-            <p className="text-gray-600 dark:text-gray-300 mb-4">Selected for today's stand up!</p>
+            <p className="text-gray-600 dark:text-gray-300 mb-4">Selected for today&apos;s stand up!</p>
           </div>
         ) : isSelecting ? (
           <div className="text-center">

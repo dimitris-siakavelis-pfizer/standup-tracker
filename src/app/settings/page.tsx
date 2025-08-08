@@ -5,10 +5,7 @@ import { AppState } from '@/types';
 import { getStateFromURL, updateURL, getURLWithState } from '@/utils/urlState';
 import ThemeToggle from '@/components/ThemeToggle';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-
 export default function SettingsPage() {
-  const router = useRouter();
   const [appState, setAppState] = useState<AppState>({
     teamMembers: [],
     selectedWinner: null,
@@ -34,6 +31,9 @@ export default function SettingsPage() {
   const handleShare = async () => {
     // Update URL with current state
     updateURL(appState);
+    
+    // Only run on client side
+    if (typeof window === 'undefined') return;
     
     // Copy current URL to clipboard
     try {
