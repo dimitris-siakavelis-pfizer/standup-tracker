@@ -67,30 +67,30 @@ export default function RandomSelector({
 
   return (
     <div className="card">
-      <h2 className="text-xl font-semibold text-gray-800 mb-4">Random Selection</h2>
+      <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">Random Selection</h2>
       
       {/* Winner Display */}
       <div className="mb-6">
         {selectedWinner ? (
           <div className="text-center">
-            <div className="text-2xl md:text-4xl lg:text-5xl font-bold text-center py-6 px-4 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent break-words">
+            <div className="winner-display">
               {displayName}
             </div>
-            <p className="text-gray-600 mb-4">Selected for today's stand up!</p>
+            <p className="text-gray-600 dark:text-gray-300 mb-4">Selected for today's stand up!</p>
           </div>
         ) : isSelecting ? (
           <div className="text-center">
-            <div className="text-2xl md:text-4xl lg:text-5xl font-bold text-center py-6 px-4 text-blue-600 animate-pulse break-words">
+            <div className="text-2xl md:text-4xl lg:text-5xl font-bold text-center py-6 px-4 text-blue-600 dark:text-blue-400 animate-pulse break-words">
               {displayName || 'Selecting...'}
             </div>
-            <p className="text-gray-600 mb-4">Selecting a team member...</p>
+            <p className="text-gray-600 dark:text-gray-300 mb-4">Selecting a team member...</p>
           </div>
         ) : (
           <div className="text-center">
-            <div className="text-2xl md:text-4xl lg:text-5xl font-bold text-center py-6 px-4 text-gray-400 break-words">
+            <div className="text-2xl md:text-4xl lg:text-5xl font-bold text-center py-6 px-4 text-gray-400 dark:text-gray-500 break-words">
               No Selection
             </div>
-            <p className="text-gray-600 mb-4">Click Start to select a team member</p>
+            <p className="text-gray-600 dark:text-gray-300 mb-4">Click Start to select a team member</p>
           </div>
         )}
       </div>
@@ -106,12 +106,12 @@ export default function RandomSelector({
         </button>
         
         {enabledMembers.length === 0 && (
-          <p className="text-red-600 text-sm">No enabled team members available</p>
+          <p className="text-red-600 dark:text-red-400 text-sm">No enabled team members available</p>
         )}
       </div>
 
       {/* Enabled Members Count */}
-      <div className="mt-4 text-center text-sm text-gray-600">
+      <div className="mt-4 text-center text-sm text-gray-600 dark:text-gray-400">
         {enabledMembers.length} of {teamMembers.length} team members enabled
       </div>
     </div>

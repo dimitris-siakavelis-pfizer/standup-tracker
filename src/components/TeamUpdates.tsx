@@ -12,6 +12,7 @@ interface TeamUpdatesProps {
 
 export default function TeamUpdates({ teamMembers, onUpdateMember, blinkingMembers, setBlinkingMembers }: TeamUpdatesProps) {
   const enabledMembers = teamMembers.filter(member => member.enabled);
+  const updatedMembers = enabledMembers.filter(member => member.updateGiven);
 
   const handleBlockerChange = (id: string, blocker: string) => {
     onUpdateMember(id, { blocker });
@@ -45,38 +46,38 @@ export default function TeamUpdates({ teamMembers, onUpdateMember, blinkingMembe
   return (
     <div className="card">
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-xl font-semibold text-gray-800">Team Updates</h2>
-        <div className="text-sm text-gray-500">
-          {enabledMembers.length} enabled members
+        <h2 className="text-xl font-semibold text-gray-800 dark:text-white">Team Updates</h2>
+        <div className="text-sm text-gray-500 dark:text-gray-400">
+          {updatedMembers.length} of {enabledMembers.length} updates given
         </div>
       </div>
 
       {enabledMembers.length === 0 ? (
         <div className="text-center py-8">
-          <p className="text-gray-500 mb-2">No enabled team members</p>
-          <p className="text-gray-400 text-sm">Enable team members to track their updates</p>
+          <p className="text-gray-500 dark:text-gray-400 mb-2">No enabled team members</p>
+          <p className="text-gray-400 dark:text-gray-500 text-sm">Enable team members to track their updates</p>
         </div>
       ) : (
         <div className="space-y-4">
           {enabledMembers.map((member) => (
             <div 
               key={member.id} 
-              className={`border border-gray-200 rounded-md p-3 transition-all duration-300 cursor-pointer hover:bg-gray-50 ${
+              className={`border border-gray-200 dark:border-gray-600 rounded-md p-3 transition-all duration-300 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 ${
                 member.updateGiven 
-                  ? 'bg-green-50 border-green-200' 
-                  : 'bg-white'
-              } ${blinkingMembers.has(member.id) ? 'animate-pulse scale-105 shadow-lg border-green-400 bg-green-100' : ''}`}
+                  ? 'bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-700' 
+                  : 'bg-white dark:bg-gray-800'
+              } ${blinkingMembers.has(member.id) ? 'animate-pulse scale-105 shadow-lg border-green-400 dark:border-green-500 bg-green-100 dark:bg-green-900/30' : ''}`}
               onClick={() => handleCardClick(member.id, member.updateGiven || false)}
             >
               <div className="flex items-center gap-3">
                 <div className={`w-2 h-2 rounded-full flex-shrink-0 transition-all duration-300 ${
-                  member.updateGiven ? 'bg-green-500' : 'bg-gray-300'
+                  member.updateGiven ? 'bg-green-500' : 'bg-gray-300 dark:bg-gray-500'
                 } ${blinkingMembers.has(member.id) ? 'scale-150 bg-green-600' : ''}`}></div>
                 
                 <div className="w-24 flex-shrink-0">
                   <h3 className={`font-medium text-sm truncate transition-all duration-300 ${
-                    member.updateGiven ? 'text-green-800' : 'text-gray-900'
-                  } ${blinkingMembers.has(member.id) ? 'text-green-900 font-semibold' : ''}`}>
+                    member.updateGiven ? 'text-green-800 dark:text-green-200' : 'text-gray-900 dark:text-white'
+                  } ${blinkingMembers.has(member.id) ? 'text-green-900 dark:text-green-100 font-semibold' : ''}`}>
                     {member.name}
                   </h3>
                 </div>
@@ -89,9 +90,9 @@ export default function TeamUpdates({ teamMembers, onUpdateMember, blinkingMembe
                     placeholder="blockers"
                     className={`w-full px-2 py-1 border rounded text-xs focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent transition-all duration-300 ${
                       member.updateGiven 
-                        ? 'border-green-300 bg-green-50 text-green-900 placeholder-green-500' 
-                        : 'border-gray-300'
-                    } ${blinkingMembers.has(member.id) ? 'border-green-400 bg-green-100' : ''}`}
+                        ? 'border-green-300 dark:border-green-600 bg-green-50 dark:bg-green-900/20 text-green-900 dark:text-green-200 placeholder-green-500 dark:placeholder-green-400' 
+                        : 'border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400'
+                    } ${blinkingMembers.has(member.id) ? 'border-green-400 dark:border-green-500 bg-green-100 dark:bg-green-900/30' : ''}`}
                   />
                 </div>
               </div>

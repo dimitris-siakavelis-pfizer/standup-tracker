@@ -2,8 +2,8 @@ export interface TeamMember {
   id: string;
   name: string;
   enabled: boolean;
+  updateGiven: boolean;
   blocker?: string;
-  updateGiven?: boolean;
 }
 
 export interface AppState {
@@ -11,6 +11,8 @@ export interface AppState {
   selectedWinner: TeamMember | null;
   isSelecting: boolean;
 }
+
+export type Theme = 'light' | 'dark';
 
 export interface ShareData {
   teamMembers: TeamMember[];

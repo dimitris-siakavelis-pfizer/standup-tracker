@@ -54,13 +54,12 @@ export default function Home() {
     setAppState(prev => ({
       ...prev,
       isSelecting: true,
-      teamMembers: prev.teamMembers
-        .map(member => ({
-          ...member,
-          updateGiven: false,
-          blocker: undefined,
-        }))
-        .sort(() => Math.random() - 0.5), // Randomize the order
+      teamMembers: prev.teamMembers.map(member => ({
+        ...member,
+        updateGiven: false,
+        blocker: undefined,
+      }))
+      .sort(() => Math.random() - 0.5), // Randomize the order
     }));
   };
 
@@ -107,22 +106,22 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Header */}
-      <header className="bg-white shadow-sm border-b border-gray-200">
+      <header className="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-6">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Daily Stand Up Tracker</h1>
-              <p className="text-gray-600 mt-1">Manage your team's daily stand up meetings</p>
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Daily Stand Up Tracker</h1>
+              <p className="text-gray-600 dark:text-gray-300 mt-1">Manage your team's daily stand up meetings</p>
             </div>
             <div className="flex items-center space-x-4">
-              <div className="text-sm text-gray-500">
+              <div className="text-sm text-gray-500 dark:text-gray-400">
                 {appState.teamMembers.length} team members
               </div>
               <Link 
                 href="/settings" 
-                className="text-blue-600 hover:text-blue-700 font-medium text-sm"
+                className="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 font-medium text-sm"
               >
                 Settings
               </Link>
@@ -147,7 +146,6 @@ export default function Home() {
             <NameList
               teamMembers={appState.teamMembers}
               onUpdateMembers={updateTeamMembers}
-              onClearAll={clearAll}
             />
           </div>
 
@@ -175,7 +173,6 @@ export default function Home() {
           <NameList
             teamMembers={appState.teamMembers}
             onUpdateMembers={updateTeamMembers}
-            onClearAll={clearAll}
           />
           <TeamUpdates
             teamMembers={appState.teamMembers}
@@ -187,9 +184,9 @@ export default function Home() {
       </main>
 
       {/* Footer */}
-      <footer className="bg-white border-t border-gray-200 mt-16">
+      <footer className="bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 mt-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="text-center text-gray-500 text-sm">
+          <div className="text-center text-gray-500 dark:text-gray-400 text-sm">
             <p>Daily Stand Up Tracker - Built with Next.js and TailwindCSS</p>
             <p className="mt-1">All data is stored locally in the URL for easy sharing</p>
           </div>

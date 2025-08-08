@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { AppState } from '@/types';
 import { getStateFromURL, updateURL } from '@/utils/urlState';
+import ThemeToggle from '@/components/ThemeToggle';
 import Link from 'next/link';
 
 export default function SettingsPage() {
@@ -48,18 +49,18 @@ export default function SettingsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Header */}
-      <header className="bg-white shadow-sm border-b border-gray-200">
+      <header className="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-6">
             <div className="flex items-center gap-4">
-              <Link href="/" className="text-blue-600 hover:text-blue-700 font-medium">
+              <Link href="/" className="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 font-medium">
                 ← Back to Stand Up
               </Link>
               <div>
-                <h1 className="text-3xl font-bold text-gray-900">Settings</h1>
-                <p className="text-gray-600 mt-1">Configure your Daily Stand Up Tracker</p>
+                <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Settings</h1>
+                <p className="text-gray-600 dark:text-gray-300 mt-1">Configure your Daily Stand Up Tracker</p>
               </div>
             </div>
           </div>
@@ -69,14 +70,33 @@ export default function SettingsPage() {
       {/* Main Content */}
       <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="space-y-8">
-          {/* Share Configuration */}
+          {/* Theme Configuration */}
           <div className="card">
-            <h2 className="text-xl font-semibold text-gray-800 mb-4">Share Configuration</h2>
+            <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">Theme Settings</h2>
             
             <div className="space-y-4">
               <div>
-                <h3 className="text-lg font-medium text-gray-700 mb-2">Share Link</h3>
-                <p className="text-gray-600 text-sm mb-3">
+                <h3 className="text-lg font-medium text-gray-700 dark:text-gray-300 mb-2">Dark Mode</h3>
+                <p className="text-gray-600 dark:text-gray-400 text-sm mb-4">
+                  Switch between light and dark themes. Your preference will be saved automatically.
+                </p>
+                <div className="flex items-center gap-4">
+                  <span className="text-sm text-gray-600 dark:text-gray-400">Light</span>
+                  <ThemeToggle />
+                  <span className="text-sm text-gray-600 dark:text-gray-400">Dark</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Share Configuration */}
+          <div className="card">
+            <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">Share Configuration</h2>
+            
+            <div className="space-y-4">
+              <div>
+                <h3 className="text-lg font-medium text-gray-700 dark:text-gray-300 mb-2">Share Link</h3>
+                <p className="text-gray-600 dark:text-gray-400 text-sm mb-3">
                   Share your current team configuration with others. The link will include all team members and their settings.
                 </p>
                 <button
@@ -105,26 +125,27 @@ export default function SettingsPage() {
 
           {/* About Section */}
           <div className="card">
-            <h2 className="text-xl font-semibold text-gray-800 mb-4">About</h2>
+            <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">About</h2>
             
             <div className="space-y-4">
               <div>
-                <h3 className="text-lg font-medium text-gray-700 mb-2">Daily Stand Up Tracker</h3>
-                <p className="text-gray-600 text-sm">
+                <h3 className="text-lg font-medium text-gray-700 dark:text-gray-300 mb-2">Daily Stand Up Tracker</h3>
+                <p className="text-gray-600 dark:text-gray-400 text-sm">
                   Daily Stand Up Tracker (DSUT) is a web-based tool for managing daily stand up meetings. 
                   All data is stored locally in the URL, making it easy to share configurations with your team.
                 </p>
               </div>
 
-              <div className="border-t pt-4">
-                <h3 className="text-lg font-medium text-gray-700 mb-2">Features</h3>
-                <ul className="text-gray-600 text-sm space-y-1">
+              <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
+                <h3 className="text-lg font-medium text-gray-700 dark:text-gray-300 mb-2">Features</h3>
+                <ul className="text-gray-600 dark:text-gray-400 text-sm space-y-1">
                   <li>• Add, edit, and remove team members</li>
                   <li>• Enable/disable team members for selection</li>
                   <li>• Random name selection with animations</li>
                   <li>• Share configurations via URL</li>
                   <li>• Responsive design for all devices</li>
                   <li>• Track blockers and updates for each team member</li>
+                  <li>• Dark mode support</li>
                 </ul>
               </div>
             </div>
@@ -132,12 +153,12 @@ export default function SettingsPage() {
 
           {/* Technical Information */}
           <div className="card">
-            <h2 className="text-xl font-semibold text-gray-800 mb-4">Technical Information</h2>
+            <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">Technical Information</h2>
             
             <div className="space-y-4">
               <div>
-                <h3 className="text-lg font-medium text-gray-700 mb-2">Built With</h3>
-                <ul className="text-gray-600 text-sm space-y-1">
+                <h3 className="text-lg font-medium text-gray-700 dark:text-gray-300 mb-2">Built With</h3>
+                <ul className="text-gray-600 dark:text-gray-400 text-sm space-y-1">
                   <li>• Next.js 15.0.0</li>
                   <li>• React 18.3.1</li>
                   <li>• TypeScript 5.3.3</li>
@@ -145,9 +166,9 @@ export default function SettingsPage() {
                 </ul>
               </div>
 
-              <div className="border-t pt-4">
-                <h3 className="text-lg font-medium text-gray-700 mb-2">Data Storage</h3>
-                <p className="text-gray-600 text-sm">
+              <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
+                <h3 className="text-lg font-medium text-gray-700 dark:text-gray-300 mb-2">Data Storage</h3>
+                <p className="text-gray-600 dark:text-gray-400 text-sm">
                   All team member data and configurations are stored locally in the URL using base64 encoding. 
                   This ensures no server-side storage is required and makes sharing configurations simple and secure.
                 </p>
@@ -158,9 +179,9 @@ export default function SettingsPage() {
       </main>
 
       {/* Footer */}
-      <footer className="bg-white border-t border-gray-200 mt-16">
+      <footer className="bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 mt-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="text-center text-gray-500 text-sm">
+          <div className="text-center text-gray-500 dark:text-gray-400 text-sm">
             <p>Daily Stand Up Tracker - Built with Next.js and TailwindCSS</p>
             <p className="mt-1">All data is stored locally in the URL for easy sharing</p>
           </div>

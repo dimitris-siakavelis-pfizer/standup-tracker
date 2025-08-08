@@ -19,6 +19,7 @@ export default function NameList({ teamMembers, onUpdateMembers }: NameListProps
         id: Date.now().toString(),
         name: newName.trim(),
         enabled: true,
+        updateGiven: false,
       };
       onUpdateMembers([...teamMembers, newMember]);
       setNewName('');
@@ -86,7 +87,7 @@ export default function NameList({ teamMembers, onUpdateMembers }: NameListProps
   return (
     <div className="card">
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-xl font-semibold text-gray-800">Team Members</h2>
+        <h2 className="text-xl font-semibold text-gray-800 dark:text-white">Team Members</h2>
         <div className="flex gap-2">
           <button
             onClick={enableAll}
@@ -127,7 +128,7 @@ export default function NameList({ teamMembers, onUpdateMembers }: NameListProps
       {/* Team members list */}
       <div className="space-y-2 max-h-64 overflow-y-auto">
         {teamMembers.length === 0 ? (
-          <p className="text-gray-500 text-center py-4">No team members added yet</p>
+          <p className="text-gray-500 dark:text-gray-400 text-center py-4">No team members added yet</p>
         ) : (
           teamMembers.map((member) => (
             <div
@@ -147,7 +148,7 @@ export default function NameList({ teamMembers, onUpdateMembers }: NameListProps
                   className={`w-4 h-4 rounded border-2 transition-colors ${
                     member.enabled
                       ? 'bg-blue-600 border-blue-600'
-                      : 'bg-gray-200 border-gray-300'
+                      : 'bg-gray-200 dark:bg-gray-600 border-gray-300 dark:border-gray-500'
                   }`}
                 >
                   {member.enabled && (
@@ -167,7 +168,7 @@ export default function NameList({ teamMembers, onUpdateMembers }: NameListProps
                     autoFocus
                   />
                 ) : (
-                  <span className="flex-1 font-medium">{member.name}</span>
+                  <span className="flex-1 font-medium text-gray-900 dark:text-white">{member.name}</span>
                 )}
               </div>
 
@@ -176,13 +177,13 @@ export default function NameList({ teamMembers, onUpdateMembers }: NameListProps
                   <>
                     <button
                       onClick={saveEdit}
-                      className="text-green-600 hover:text-green-700 text-sm font-medium"
+                      className="text-green-600 hover:text-green-700 dark:text-green-400 dark:hover:text-green-300 text-sm font-medium"
                     >
                       Save
                     </button>
                     <button
                       onClick={cancelEdit}
-                      className="text-gray-600 hover:text-gray-700 text-sm font-medium"
+                      className="text-gray-600 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 text-sm font-medium"
                     >
                       Cancel
                     </button>
@@ -191,13 +192,13 @@ export default function NameList({ teamMembers, onUpdateMembers }: NameListProps
                   <>
                     <button
                       onClick={() => startEdit(member)}
-                      className="text-blue-600 hover:text-blue-700 text-sm font-medium"
+                      className="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 text-sm font-medium"
                     >
                       Edit
                     </button>
                     <button
                       onClick={() => removeMember(member.id)}
-                      className="text-red-600 hover:text-red-700 text-sm font-medium"
+                      className="text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 text-sm font-medium"
                     >
                       Remove
                     </button>
