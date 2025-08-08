@@ -24,6 +24,13 @@ export function updateURL(state: AppState) {
   window.history.replaceState({}, '', url.toString());
 }
 
+export function getURLWithState(path: string, state: AppState): string {
+  const encoded = encodeState(state);
+  const url = new URL(path, window.location.origin);
+  url.searchParams.set('state', encoded);
+  return url.toString();
+}
+
 export function getStateFromURL(): ShareData | null {
   if (typeof window === 'undefined') return null;
   

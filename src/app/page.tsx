@@ -2,13 +2,15 @@
 
 import { useState, useEffect } from 'react';
 import { TeamMember, AppState } from '@/types';
-import { getStateFromURL, updateURL } from '@/utils/urlState';
+import { getStateFromURL, updateURL, getURLWithState } from '@/utils/urlState';
 import NameList from '@/components/NameList';
 import RandomSelector from '@/components/RandomSelector';
 import TeamUpdates from '@/components/TeamUpdates';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 export default function Home() {
+  const router = useRouter();
   const [appState, setAppState] = useState<AppState>({
     teamMembers: [],
     selectedWinner: null,
@@ -120,7 +122,7 @@ export default function Home() {
                 {appState.teamMembers.length} team members
               </div>
               <Link 
-                href="/settings" 
+                href={getURLWithState('/settings', appState)}
                 className="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 font-medium text-sm"
               >
                 Settings

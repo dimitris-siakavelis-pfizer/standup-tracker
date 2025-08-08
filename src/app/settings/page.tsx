@@ -2,11 +2,13 @@
 
 import { useState, useEffect } from 'react';
 import { AppState } from '@/types';
-import { getStateFromURL, updateURL } from '@/utils/urlState';
+import { getStateFromURL, updateURL, getURLWithState } from '@/utils/urlState';
 import ThemeToggle from '@/components/ThemeToggle';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 export default function SettingsPage() {
+  const router = useRouter();
   const [appState, setAppState] = useState<AppState>({
     teamMembers: [],
     selectedWinner: null,
@@ -14,14 +16,18 @@ export default function SettingsPage() {
   });
   const [showCopied, setShowCopied] = useState(false);
 
-  // Load state from URL on mount
+  // Load state from URL on mount and preserve it
   useEffect(() => {
     const urlState = getStateFromURL();
     if (urlState) {
-      setAppState(prev => ({
-        ...prev,
+      const newState = {
         teamMembers: urlState.teamMembers,
-      }));
+        selectedWinner: null,
+        isSelecting: false,
+      };
+      setAppState(newState);
+      // Preserve the URL state
+      updateURL(newState);
     }
   }, []);
 
@@ -55,7 +61,10 @@ export default function SettingsPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-6">
             <div className="flex items-center gap-4">
-              <Link href="/" className="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 font-medium">
+              <Link 
+                href={getURLWithState('/', appState)}
+                className="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 font-medium"
+              >
                 ← Back to Stand Up
               </Link>
               <div>
