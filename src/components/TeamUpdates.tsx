@@ -85,7 +85,7 @@ export default function TeamUpdates({ teamMembers, onUpdateMember, blinkingMembe
                     type="text"
                     value={member.blocker || ''}
                     onChange={(e) => handleBlockerChange(member.id, e.target.value)}
-                    placeholder="blockers"
+                    placeholder="Type blockers here..."
                     className={`w-full px-2 py-1 border rounded text-xs focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent transition-all duration-300 ${
                       member.updateGiven 
                         ? 'border-green-300 dark:border-green-600 bg-green-50 dark:bg-green-900/20 text-green-900 dark:text-green-200 placeholder-green-500 dark:placeholder-green-400' 
