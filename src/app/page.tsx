@@ -112,8 +112,8 @@ export default function Home() {
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Left Column - Random Selection and Team Members (1/3) */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          {/* Left Column - Random Selection and Team Members (50%) */}
           <div className="lg:col-span-1 space-y-6">
             <RandomSelector
               teamMembers={appState.teamMembers}
@@ -128,8 +128,8 @@ export default function Home() {
             />
           </div>
 
-          {/* Right Column - Team Updates (2/3) */}
-          <div className="lg:col-span-2">
+          {/* Right Column - Team Updates (50%) */}
+          <div className="lg:col-span-1">
             <TeamUpdates
               teamMembers={appState.teamMembers}
               onUpdateMember={updateMember}
