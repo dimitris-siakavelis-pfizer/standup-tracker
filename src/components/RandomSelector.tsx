@@ -36,7 +36,7 @@ export default function RandomSelector({
     
     setAnimationInterval(interval);
     
-    // Stop after 3 seconds
+    // Stop after 4 seconds
     setTimeout(() => {
       if (interval) {
         clearInterval(interval);
@@ -46,7 +46,7 @@ export default function RandomSelector({
       const winner = enabledMembers[Math.floor(Math.random() * enabledMembers.length)];
       onStopSelection(winner);
       setDisplayName(winner.name);
-    }, 3000);
+    }, 4000);
   };
 
   useEffect(() => {
