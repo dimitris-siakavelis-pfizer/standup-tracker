@@ -12,6 +12,7 @@ export default function NameList({ teamMembers, onUpdateMembers }: NameListProps
   const [newName, setNewName] = useState('');
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editingName, setEditingName] = useState('');
+  const enabledMembers = teamMembers.filter(member => member.enabled);
 
   const addMember = () => {
     if (newName.trim()) {
@@ -88,6 +89,9 @@ export default function NameList({ teamMembers, onUpdateMembers }: NameListProps
     <div className="card">
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-xl font-semibold text-gray-800 dark:text-white">Team Members</h2>
+        <div className="text-sm text-gray-500 dark:text-gray-400">
+          {enabledMembers.length} of {teamMembers.length} team members enabled
+        </div>
         <div className="flex gap-2">
           <button
             onClick={enableAll}

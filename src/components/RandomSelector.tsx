@@ -74,7 +74,7 @@ export default function RandomSelector({
             <div className="winner-display">
               {displayName}
             </div>
-            <p className="text-gray-600 dark:text-gray-300 mb-4">Selected for today&apos;s stand up!</p>
+            <p className="text-gray-600 dark:text-gray-300 mb-4">has been selected for today&apos;s stand up!</p>
           </div>
         ) : isSelecting ? (
           <div className="text-center">
@@ -88,7 +88,7 @@ export default function RandomSelector({
             <div className="text-2xl md:text-4xl lg:text-5xl font-bold text-center py-6 px-4 text-gray-400 dark:text-gray-500 break-words">
               No Selection
             </div>
-            <p className="text-gray-600 dark:text-gray-300 mb-4">Click Start to select a team member</p>
+            <p className="text-gray-600 dark:text-gray-300 mb-4">Click Start to randomly select a team member</p>
           </div>
         )}
       </div>
@@ -108,10 +108,7 @@ export default function RandomSelector({
         )}
       </div>
 
-      {/* Enabled Members Count */}
-      <div className="mt-4 text-center text-sm text-gray-600 dark:text-gray-400">
-        {enabledMembers.length} of {teamMembers.length} team members enabled
-      </div>
+      {/* Enabled Members Count moved to Team Members box */}
     </div>
   );
 }
