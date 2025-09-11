@@ -90,7 +90,7 @@ export default function NameList({ teamMembers, onUpdateMembers }: NameListProps
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-xl font-semibold text-gray-800 dark:text-white">Team Members</h2>
         <div className="text-sm text-gray-500 dark:text-gray-400">
-          {enabledMembers.length} of {teamMembers.length} team members enabled
+          {enabledMembers.length} of {teamMembers.length} enabled
         </div>
         <div className="flex gap-2">
           <button
