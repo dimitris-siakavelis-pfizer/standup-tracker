@@ -61,20 +61,26 @@ export default function TeamUpdates({ teamMembers, onUpdateMember, blinkingMembe
             <div 
               key={member.id} 
               className={`border border-gray-200 dark:border-gray-600 rounded-md p-3 transition-all duration-300 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 ${
-                member.updateGiven 
-                  ? 'bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-700' 
-                  : 'bg-white dark:bg-gray-800'
+                (member.blocker && member.blocker.trim() !== '')
+                  ? 'bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-700'
+                  : member.updateGiven 
+                    ? 'bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-700' 
+                    : 'bg-white dark:bg-gray-800'
               } ${blinkingMembers.has(member.id) ? 'animate-pulse scale-105 shadow-lg border-green-400 dark:border-green-500 bg-green-100 dark:bg-green-900/30' : ''}`}
               onClick={() => handleCardClick(member.id, member.updateGiven || false)}
             >
               <div className="flex items-center gap-3">
                 <div className={`w-2 h-2 rounded-full flex-shrink-0 transition-all duration-300 ${
-                  member.updateGiven ? 'bg-green-500' : 'bg-gray-300 dark:bg-gray-500'
+                  (member.blocker && member.blocker.trim() !== '')
+                    ? 'bg-red-500'
+                    : member.updateGiven ? 'bg-green-500' : 'bg-gray-300 dark:bg-gray-500'
                 } ${blinkingMembers.has(member.id) ? 'scale-150 bg-green-600' : ''}`}></div>
                 
                 <div className="w-24 flex-shrink-0">
                   <h3 className={`font-medium text-sm truncate transition-all duration-300 ${
-                    member.updateGiven ? 'text-green-800 dark:text-green-200' : 'text-gray-900 dark:text-white'
+                    (member.blocker && member.blocker.trim() !== '')
+                      ? 'text-red-800 dark:text-red-200'
+                      : member.updateGiven ? 'text-green-800 dark:text-green-200' : 'text-gray-900 dark:text-white'
                   } ${blinkingMembers.has(member.id) ? 'text-green-900 dark:text-green-100 font-semibold' : ''}`}>
                     {member.name}
                   </h3>
@@ -87,9 +93,11 @@ export default function TeamUpdates({ teamMembers, onUpdateMember, blinkingMembe
                     onChange={(e) => handleBlockerChange(member.id, e.target.value)}
                     placeholder="Type blockers here..."
                     className={`w-full px-2 py-1 border rounded text-xs focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent transition-all duration-300 ${
-                      member.updateGiven 
-                        ? 'border-green-300 dark:border-green-600 bg-green-50 dark:bg-green-900/20 text-green-900 dark:text-green-200 placeholder-green-500 dark:placeholder-green-400' 
-                        : 'border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400'
+                      (member.blocker && member.blocker.trim() !== '')
+                        ? 'border-red-300 dark:border-red-600 bg-red-50 dark:bg-red-900/20 text-red-900 dark:text-red-200 placeholder-red-500 dark:placeholder-red-400'
+                        : member.updateGiven 
+                          ? 'border-green-300 dark:border-green-600 bg-green-50 dark:bg-green-900/20 text-green-900 dark:text-green-200 placeholder-green-500 dark:placeholder-green-400' 
+                          : 'border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400'
                     } ${blinkingMembers.has(member.id) ? 'border-green-400 dark:border-green-500 bg-green-100 dark:bg-green-900/30' : ''}`}
                   />
                 </div>
