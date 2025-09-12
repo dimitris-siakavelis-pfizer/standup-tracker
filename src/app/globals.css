@@ -40,4 +40,27 @@
   .winner-display {
     @apply text-4xl md:text-6xl font-bold text-center py-8 px-4 bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 bg-clip-text text-transparent animate-pulse break-words overflow-hidden;
   }
+  
+  /* Marquee utilities */
+  .marquee-track {
+    display: inline-flex;
+    align-items: center;
+    white-space: nowrap;
+    animation-name: marquee-left;
+    animation-duration: var(--marquee-duration, 8s);
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+  }
+
+  .marquee-text {
+    font: inherit;
+    letter-spacing: inherit;
+    color: inherit;
+    text-shadow: none;
+  }
+}
+
+@keyframes marquee-left {
+  from { transform: translateX(0); }
+  to { transform: translateX(var(--marquee-translate, -50%)); }
 }

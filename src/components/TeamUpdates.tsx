@@ -1,6 +1,7 @@
 'use client';
 
 
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { TeamMember } from '@/types';
 
 interface TeamUpdatesProps {
@@ -8,6 +9,127 @@ interface TeamUpdatesProps {
   onUpdateMember: (id: string, updates: Partial<TeamMember>) => void;
   blinkingMembers: Set<string>;
   setBlinkingMembers: React.Dispatch<React.SetStateAction<Set<string>>>;
+}
+
+interface AutoScrollingInputProps {
+  value: string;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  placeholder?: string;
+  className?: string;
+  overlayTextClassName?: string;
+}
+
+function AutoScrollingInput({ value, onChange, placeholder, className, overlayTextClassName }: AutoScrollingInputProps) {
+  const inputRef = useRef<HTMLInputElement | null>(null);
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const overlayRef = useRef<HTMLDivElement | null>(null);
+  const contentRef = useRef<HTMLSpanElement | null>(null);
+  const measureRef = useRef<HTMLSpanElement | null>(null);
+  const [isFocused, setIsFocused] = useState(false);
+  const [isOverflowing, setIsOverflowing] = useState(false);
+  const [contentWidth, setContentWidth] = useState(0);
+
+  const SPEED_PX_PER_SEC = 30; // marquee speed
+  const GAP_PX = 48; // space between repeats
+
+  const overlayActive = useMemo(() => !isFocused && isOverflowing && value.trim() !== '', [isFocused, isOverflowing, value]);
+
+  const updateOverflow = useCallback(() => {
+    const el = inputRef.current;
+    const measure = measureRef.current;
+    if (!el || !measure) return;
+    const styles = getComputedStyle(el);
+    measure.style.font = styles.font;
+    measure.style.letterSpacing = styles.letterSpacing;
+    measure.textContent = value;
+
+    const textWidth = Math.ceil(measure.scrollWidth);
+    const paddingLeft = parseFloat(styles.paddingLeft) || 0;
+    const paddingRight = parseFloat(styles.paddingRight) || 0;
+    const available = el.clientWidth - paddingLeft - paddingRight;
+    setIsOverflowing(textWidth > available);
+    setContentWidth(textWidth);
+  }, [value]);
+
+  useEffect(() => {
+    updateOverflow();
+  }, [value, updateOverflow]);
+
+  useEffect(() => {
+    const el = inputRef.current;
+    if (!el) return;
+    const ro = new ResizeObserver(() => updateOverflow());
+    ro.observe(el);
+    const onResize = () => updateOverflow();
+    window.addEventListener('resize', onResize);
+    return () => {
+      ro.disconnect();
+      window.removeEventListener('resize', onResize);
+    };
+  }, [updateOverflow]);
+
+  // Apply font to overlay when active so it matches the input
+  useEffect(() => {
+    if (!overlayActive) return;
+    const overlay = overlayRef.current;
+    const el = inputRef.current;
+    if (!overlay || !el) return;
+    const styles = getComputedStyle(el);
+    overlay.style.font = styles.font;
+    overlay.style.letterSpacing = styles.letterSpacing;
+  }, [overlayActive]);
+
+  // Measure content width when marquee is active
+  useEffect(() => {
+    if (!overlayActive) return;
+    const span = contentRef.current;
+    if (!span) return;
+    const width = Math.ceil(span.scrollWidth);
+    setContentWidth(width);
+  }, [overlayActive, value]);
+
+  const marqueeStyle = useMemo(() => {
+    const distance = contentWidth + GAP_PX;
+    const dur = Math.max(4, distance / SPEED_PX_PER_SEC); // minimum duration
+    return {
+      ['--marquee-translate' as any]: `-${distance}px`,
+      ['--marquee-duration' as any]: `${dur}s`,
+      gap: `${GAP_PX}px`,
+    } as React.CSSProperties;
+  }, [contentWidth]);
+
+  return (
+    <div ref={containerRef} className="relative">
+      {/* hidden measurer for accurate text width */}
+      <span ref={measureRef} style={{ position: 'absolute', visibility: 'hidden', whiteSpace: 'nowrap' }} />
+      <input
+        ref={inputRef}
+        type="text"
+        value={value}
+        onChange={onChange}
+        placeholder={placeholder}
+        className={`${className} ${overlayActive ? 'text-transparent' : ''}`}
+        style={overlayActive ? { color: 'transparent', WebkitTextFillColor: 'transparent' } as React.CSSProperties : undefined}
+        onFocus={() => {
+          setIsFocused(true);
+          if (inputRef.current) inputRef.current.scrollLeft = 0;
+        }}
+        onBlur={() => {
+          setIsFocused(false);
+          updateOverflow();
+        }}
+      />
+
+      {overlayActive && (
+        <div ref={overlayRef} className={`absolute inset-0 flex items-center overflow-hidden px-2 pointer-events-none ${overlayTextClassName || ''}`}>
+          <div className="marquee-track" style={marqueeStyle}>
+            <span ref={contentRef} className="inline-block whitespace-nowrap marquee-text">{value}</span>
+            <span className="inline-block whitespace-nowrap marquee-text" aria-hidden="true">{value}</span>
+          </div>
+        </div>
+      )}
+    </div>
+  );
 }
 
 export default function TeamUpdates({ teamMembers, onUpdateMember, blinkingMembers, setBlinkingMembers }: TeamUpdatesProps) {
@@ -87,8 +209,7 @@ export default function TeamUpdates({ teamMembers, onUpdateMember, blinkingMembe
                 </div>
                 
                 <div onClick={handleBlockerClick} className="flex-1">
-                  <input
-                    type="text"
+                  <AutoScrollingInput
                     value={member.blocker || ''}
                     onChange={(e) => handleBlockerChange(member.id, e.target.value)}
                     placeholder="Type blockers here..."
@@ -99,6 +220,12 @@ export default function TeamUpdates({ teamMembers, onUpdateMember, blinkingMembe
                           ? 'border-green-300 dark:border-green-600 bg-green-50 dark:bg-green-900/20 text-green-900 dark:text-green-200 placeholder-green-500 dark:placeholder-green-400' 
                           : 'border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400'
                     } ${blinkingMembers.has(member.id) ? 'border-green-400 dark:border-green-500 bg-green-100 dark:bg-green-900/30' : ''}`}
+                    overlayTextClassName={`${(member.blocker && member.blocker.trim() !== '')
+                      ? 'text-red-900 dark:text-red-200'
+                      : member.updateGiven
+                        ? 'text-green-900 dark:text-green-200'
+                        : 'text-white'}
+                    `}
                   />
                 </div>
               </div>
