@@ -134,7 +134,7 @@ export default function SettingsPage() {
         <div className="space-y-8">
           {/* Today's DSU */}
           <div className="card">
-            <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">Today's DSU</h2>
+            <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">Today&apos;s DSU</h2>
             <p className="text-gray-600 dark:text-gray-400 text-sm mb-3">
               Copy all blockers for enabled team members to your clipboard in a friendly format.
             </p>

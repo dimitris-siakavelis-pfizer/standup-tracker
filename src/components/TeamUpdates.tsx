@@ -88,12 +88,14 @@ function AutoScrollingInput({ value, onChange, placeholder, className, overlayTe
     setContentWidth(width);
   }, [overlayActive, value]);
 
-  const marqueeStyle = useMemo(() => {
+  const marqueeStyle = useMemo<React.CSSProperties>(() => {
     const distance = contentWidth + GAP_PX;
     const dur = Math.max(4, distance / SPEED_PX_PER_SEC); // minimum duration
     return {
-      ['--marquee-translate' as any]: `-${distance}px`,
-      ['--marquee-duration' as any]: `${dur}s`,
+      // CSS variable properties are not in the React.CSSProperties index, but we can set them via
+      // a type-safe cast using the index signature
+      ['--marquee-translate' as unknown as keyof React.CSSProperties]: `-${distance}px` as unknown as never,
+      ['--marquee-duration' as unknown as keyof React.CSSProperties]: `${dur}s` as unknown as never,
       gap: `${GAP_PX}px`,
     } as React.CSSProperties;
   }, [contentWidth]);
