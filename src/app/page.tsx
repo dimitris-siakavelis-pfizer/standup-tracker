@@ -111,7 +111,7 @@ export default function Home() {
       </header>
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="max-w-7xl mx-auto px-0 sm:px-6 lg:px-8 py-8">
         <div className="hidden lg:grid lg:grid-cols-2 gap-8">
           {/* Left Column - Random Selection and Team Members (50%) */}
           <div className="lg:col-span-1 space-y-6">
@@ -163,7 +163,7 @@ export default function Home() {
 
       {/* Footer */}
       <footer className="bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 mt-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div className="max-w-7xl mx-auto px-0 sm:px-6 lg:px-8 py-6">
           <div className="text-center text-gray-500 dark:text-gray-400 text-sm">
             <p>Daily Stand Up Tracker - Built with Next.js and TailwindCSS</p>
             <p className="mt-1">All data is stored locally in the URL for easy sharing</p>
