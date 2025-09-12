@@ -160,25 +160,6 @@ export default function SettingsPage() {
               )}
             </button>
           </div>
-          {/* Theme Configuration */}
-          <div className="card">
-            <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">Theme Settings</h2>
-            
-            <div className="space-y-4">
-              <div>
-                <h3 className="text-lg font-medium text-gray-700 dark:text-gray-300 mb-2">Dark Mode</h3>
-                <p className="text-gray-600 dark:text-gray-400 text-sm mb-4">
-                  Switch between light and dark themes. Your preference will be saved automatically.
-                </p>
-                <div className="flex items-center gap-4">
-                  <span className="text-sm text-gray-600 dark:text-gray-400">Light</span>
-                  <ThemeToggle />
-                  <span className="text-sm text-gray-600 dark:text-gray-400">Dark</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
           {/* Share Configuration */}
           <div className="card">
             <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">Share Configuration</h2>
@@ -209,6 +190,25 @@ export default function SettingsPage() {
                     </span>
                   )}
                 </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Theme Configuration */}
+          <div className="card">
+            <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">Theme Settings</h2>
+            
+            <div className="space-y-4">
+              <div>
+                <h3 className="text-lg font-medium text-gray-700 dark:text-gray-300 mb-2">Dark Mode</h3>
+                <p className="text-gray-600 dark:text-gray-400 text-sm mb-4">
+                  Switch between light and dark themes. Your preference will be saved automatically.
+                </p>
+                <div className="flex items-center gap-4">
+                  <span className="text-sm text-gray-600 dark:text-gray-400">Light</span>
+                  <ThemeToggle />
+                  <span className="text-sm text-gray-600 dark:text-gray-400">Dark</span>
+                </div>
               </div>
             </div>
           </div>
