@@ -12,6 +12,7 @@ export default function SettingsPage() {
     isSelecting: false,
   });
   const [showCopied, setShowCopied] = useState(false);
+  const [showCopiedDSU, setShowCopiedDSU] = useState(false);
 
   // Load state from URL on mount and preserve it
   useEffect(() => {
@@ -54,6 +55,58 @@ export default function SettingsPage() {
     }
   };
 
+  const getOrdinalSuffix = (day: number): string => {
+    if (day % 100 >= 11 && day % 100 <= 13) return 'th';
+    switch (day % 10) {
+      case 1: return 'st';
+      case 2: return 'nd';
+      case 3: return 'rd';
+      default: return 'th';
+    }
+  };
+
+  const formatDSUDate = (date: Date): string => {
+    const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    const months = [
+      'January', 'February', 'March', 'April', 'May', 'June',
+      'July', 'August', 'September', 'October', 'November', 'December'
+    ];
+    const dayName = days[date.getDay()];
+    const dayOfMonth = date.getDate();
+    const monthName = months[date.getMonth()];
+    const year = date.getFullYear();
+    return `${dayName} the ${dayOfMonth}${getOrdinalSuffix(dayOfMonth)} of ${monthName} ${year}`;
+  };
+
+  const handleCopyDSU = async () => {
+    // Ensure we have the latest state in the URL (optional)
+    updateURL(appState);
+
+    const today = new Date();
+    const header = `DSU blockers for ${formatDSUDate(today)}:`;
+    const lines = appState.teamMembers
+      .filter(member => (member.blocker && member.blocker.trim() !== ''))
+      .map(member => `- ${member.name}: ${member.blocker!.trim()}`);
+    const text = [header, ...lines].join('\n');
+
+    try {
+      await navigator.clipboard.writeText(text);
+      setShowCopiedDSU(true);
+      setTimeout(() => setShowCopiedDSU(false), 2000);
+    } catch (error) {
+      console.error('Failed to copy DSU to clipboard:', error);
+      // Fallback
+      const temp = document.createElement('textarea');
+      temp.value = text;
+      document.body.appendChild(temp);
+      temp.select();
+      document.execCommand('copy');
+      document.body.removeChild(temp);
+      setShowCopiedDSU(true);
+      setTimeout(() => setShowCopiedDSU(false), 2000);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Header */}
@@ -79,6 +132,34 @@ export default function SettingsPage() {
       {/* Main Content */}
       <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="space-y-8">
+          {/* Today's DSU */}
+          <div className="card">
+            <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">Today's DSU</h2>
+            <p className="text-gray-600 dark:text-gray-400 text-sm mb-3">
+              Copy all blockers for enabled team members to your clipboard in a friendly format.
+            </p>
+            <button
+              onClick={handleCopyDSU}
+              className="btn-primary w-full"
+            >
+              {showCopiedDSU ? (
+                <span className="flex items-center justify-center gap-2">
+                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                  </svg>
+                  Copied!
+                </span>
+              ) : (
+                <span className="flex items-center justify-center gap-2">
+                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+                    <rect x="7" y="3" width="9" height="12" rx="2"></rect>
+                    <rect x="4" y="6" width="9" height="12" rx="2"></rect>
+                  </svg>
+                  Copy to clipboard
+                </span>
+              )}
+            </button>
+          </div>
           {/* Theme Configuration */}
           <div className="card">
             <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">Theme Settings</h2>
