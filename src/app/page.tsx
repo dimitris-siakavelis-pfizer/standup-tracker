@@ -17,6 +17,7 @@ export default function Home() {
     activeTimer: null,
   });
   const [blinkingMembers, setBlinkingMembers] = useState<Set<string>>(new Set());
+  const [completedTimers, setCompletedTimers] = useState<Set<string>>(new Set());
 
   // Load state from URL on mount
   useEffect(() => {
@@ -90,6 +91,13 @@ export default function Home() {
   const startTimer = (memberId: string) => {
     if (!appState.timerEnabled) return;
     
+    // Clear any completed timer for this member when starting a new one
+    setCompletedTimers(prev => {
+      const newSet = new Set(prev);
+      newSet.delete(memberId);
+      return newSet;
+    });
+    
     setAppState(prev => ({
       ...prev,
       activeTimer: {
@@ -101,6 +109,9 @@ export default function Home() {
   };
 
   const stopTimer = () => {
+    if (appState.activeTimer) {
+      setCompletedTimers(prev => new Set([...Array.from(prev), appState.activeTimer!.memberId]));
+    }
     setAppState(prev => ({
       ...prev,
       activeTimer: null,
@@ -164,6 +175,7 @@ export default function Home() {
               setBlinkingMembers={setBlinkingMembers}
               timerEnabled={appState.timerEnabled}
               activeTimer={appState.activeTimer}
+              completedTimers={completedTimers}
               onStartTimer={startTimer}
               onStopTimer={stopTimer}
             />
@@ -190,6 +202,7 @@ export default function Home() {
             setBlinkingMembers={setBlinkingMembers}
             timerEnabled={appState.timerEnabled}
             activeTimer={appState.activeTimer}
+            completedTimers={completedTimers}
             onStartTimer={startTimer}
             onStopTimer={stopTimer}
           />

@@ -12,6 +12,7 @@ interface TeamUpdatesProps {
   setBlinkingMembers: React.Dispatch<React.SetStateAction<Set<string>>>;
   timerEnabled: boolean;
   activeTimer: AppState['activeTimer'];
+  completedTimers: Set<string>;
   onStartTimer: (memberId: string) => void;
   onStopTimer: () => void;
 }
@@ -139,7 +140,7 @@ function AutoScrollingInput({ value, onChange, placeholder, className, overlayTe
   );
 }
 
-export default function TeamUpdates({ teamMembers, onUpdateMember, blinkingMembers, setBlinkingMembers, timerEnabled, activeTimer, onStartTimer, onStopTimer }: TeamUpdatesProps) {
+export default function TeamUpdates({ teamMembers, onUpdateMember, blinkingMembers, setBlinkingMembers, timerEnabled, activeTimer, completedTimers, onStartTimer, onStopTimer }: TeamUpdatesProps) {
   const enabledMembers = teamMembers.filter(member => member.enabled);
   const updatedMembers = enabledMembers.filter(member => member.updateGiven);
 
@@ -218,11 +219,11 @@ export default function TeamUpdates({ teamMembers, onUpdateMember, blinkingMembe
                       ? 'bg-red-500'
                       : member.updateGiven ? 'bg-green-500' : 'bg-gray-300 dark:bg-gray-500'
                   } ${blinkingMembers.has(member.id) ? 'scale-150 bg-green-600' : ''}`}></div>
-                  {timerEnabled && activeTimer?.memberId === member.id && (
+                  {timerEnabled && (activeTimer?.memberId === member.id || completedTimers.has(member.id)) && (
                     <div className="absolute -inset-2">
                       <Timer
-                        isActive={true}
-                        duration={activeTimer.duration}
+                        isActive={activeTimer?.memberId === member.id}
+                        duration={activeTimer?.duration || 120}
                         onComplete={onStopTimer}
                         className=""
                       />
@@ -238,11 +239,11 @@ export default function TeamUpdates({ teamMembers, onUpdateMember, blinkingMembe
                   } ${blinkingMembers.has(member.id) ? 'text-green-900 dark:text-green-100 font-semibold' : ''}`}>
                     {member.name}
                   </h3>
-                  {timerEnabled && activeTimer?.memberId === member.id && (
+                  {timerEnabled && (activeTimer?.memberId === member.id || completedTimers.has(member.id)) && (
                     <div className="mt-1">
                       <Timer
-                        isActive={true}
-                        duration={activeTimer.duration}
+                        isActive={activeTimer?.memberId === member.id}
+                        duration={activeTimer?.duration || 120}
                         onComplete={onStopTimer}
                         showText={true}
                       />
