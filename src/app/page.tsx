@@ -12,6 +12,9 @@ export default function Home() {
     teamMembers: [],
     selectedWinner: null,
     isSelecting: false,
+    timerEnabled: true,
+    timerDuration: 120, // 2 minutes default
+    activeTimer: null,
   });
   const [blinkingMembers, setBlinkingMembers] = useState<Set<string>>(new Set());
 
@@ -22,6 +25,9 @@ export default function Home() {
       setAppState(prev => ({
         ...prev,
         teamMembers: urlState.teamMembers,
+        timerEnabled: urlState.timerEnabled !== undefined ? urlState.timerEnabled : true,
+        timerDuration: urlState.timerDuration || 120,
+        activeTimer: null, // Reset timer on load
       }));
     }
   }, []);
@@ -81,6 +87,27 @@ export default function Home() {
     }, 1500);
   };
 
+  const startTimer = (memberId: string) => {
+    if (!appState.timerEnabled) return;
+    
+    setAppState(prev => ({
+      ...prev,
+      activeTimer: {
+        memberId,
+        startTime: Date.now(),
+        duration: prev.timerDuration,
+      },
+    }));
+  };
+
+  const stopTimer = () => {
+    setAppState(prev => ({
+      ...prev,
+      activeTimer: null,
+    }));
+  };
+
+
 
 
 
@@ -135,6 +162,10 @@ export default function Home() {
               onUpdateMember={updateMember}
               blinkingMembers={blinkingMembers}
               setBlinkingMembers={setBlinkingMembers}
+              timerEnabled={appState.timerEnabled}
+              activeTimer={appState.activeTimer}
+              onStartTimer={startTimer}
+              onStopTimer={stopTimer}
             />
           </div>
         </div>
@@ -157,6 +188,10 @@ export default function Home() {
             onUpdateMember={updateMember}
             blinkingMembers={blinkingMembers}
             setBlinkingMembers={setBlinkingMembers}
+            timerEnabled={appState.timerEnabled}
+            activeTimer={appState.activeTimer}
+            onStartTimer={startTimer}
+            onStopTimer={stopTimer}
           />
         </div>
       </main>

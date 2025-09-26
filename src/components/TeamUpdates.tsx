@@ -2,13 +2,18 @@
 
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { TeamMember } from '@/types';
+import { TeamMember, AppState } from '@/types';
+import Timer from './Timer';
 
 interface TeamUpdatesProps {
   teamMembers: TeamMember[];
   onUpdateMember: (id: string, updates: Partial<TeamMember>) => void;
   blinkingMembers: Set<string>;
   setBlinkingMembers: React.Dispatch<React.SetStateAction<Set<string>>>;
+  timerEnabled: boolean;
+  activeTimer: AppState['activeTimer'];
+  onStartTimer: (memberId: string) => void;
+  onStopTimer: () => void;
 }
 
 interface AutoScrollingInputProps {
@@ -134,7 +139,7 @@ function AutoScrollingInput({ value, onChange, placeholder, className, overlayTe
   );
 }
 
-export default function TeamUpdates({ teamMembers, onUpdateMember, blinkingMembers, setBlinkingMembers }: TeamUpdatesProps) {
+export default function TeamUpdates({ teamMembers, onUpdateMember, blinkingMembers, setBlinkingMembers, timerEnabled, activeTimer, onStartTimer, onStopTimer }: TeamUpdatesProps) {
   const enabledMembers = teamMembers.filter(member => member.enabled);
   const updatedMembers = enabledMembers.filter(member => member.updateGiven);
 
@@ -147,6 +152,19 @@ export default function TeamUpdates({ teamMembers, onUpdateMember, blinkingMembe
   const handleCardClick = (id: string, currentUpdateGiven: boolean) => {
     const newUpdateGiven = !currentUpdateGiven;
     onUpdateMember(id, { updateGiven: newUpdateGiven });
+    
+    // Timer logic
+    if (timerEnabled) {
+      if (newUpdateGiven) {
+        // Starting timer for this member
+        onStartTimer(id);
+      } else {
+        // Stopping timer if this member was the active one
+        if (activeTimer?.memberId === id) {
+          onStopTimer();
+        }
+      }
+    }
     
     // Add flashy animation when checking
     if (newUpdateGiven) {
@@ -208,6 +226,14 @@ export default function TeamUpdates({ teamMembers, onUpdateMember, blinkingMembe
                   } ${blinkingMembers.has(member.id) ? 'text-green-900 dark:text-green-100 font-semibold' : ''}`}>
                     {member.name}
                   </h3>
+                  {timerEnabled && activeTimer?.memberId === member.id && (
+                    <Timer
+                      isActive={true}
+                      duration={activeTimer.duration}
+                      onComplete={onStopTimer}
+                      className="mt-1"
+                    />
+                  )}
                 </div>
                 
                 <div onClick={handleBlockerClick} className="flex-1">

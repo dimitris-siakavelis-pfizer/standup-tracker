@@ -10,6 +10,9 @@ export default function SettingsPage() {
     teamMembers: [],
     selectedWinner: null,
     isSelecting: false,
+    timerEnabled: true,
+    timerDuration: 120, // 2 minutes default
+    activeTimer: null,
   });
   const [showCopied, setShowCopied] = useState(false);
   const [showCopiedDSU, setShowCopiedDSU] = useState(false);
@@ -22,6 +25,9 @@ export default function SettingsPage() {
         teamMembers: urlState.teamMembers,
         selectedWinner: null,
         isSelecting: false,
+        timerEnabled: urlState.timerEnabled !== undefined ? urlState.timerEnabled : true,
+        timerDuration: urlState.timerDuration || 120,
+        activeTimer: null,
       };
       setAppState(newState);
       // Preserve the URL state
@@ -194,6 +200,76 @@ export default function SettingsPage() {
             </div>
           </div>
 
+          {/* Timer Configuration */}
+          <div className="card">
+            <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">Timer Settings</h2>
+            
+            <div className="space-y-4">
+              <div>
+                <h3 className="text-lg font-medium text-gray-700 dark:text-gray-300 mb-2">Enable Timer</h3>
+                <p className="text-gray-600 dark:text-gray-400 text-sm mb-4">
+                  Toggle the timer feature on or off. When disabled, no timer will appear when team members are selected.
+                </p>
+                <div className="flex items-center gap-4">
+                  <span className="text-sm text-gray-600 dark:text-gray-400">Disabled</span>
+                  <button
+                    onClick={() => {
+                      setAppState(prev => ({
+                        ...prev,
+                        timerEnabled: !prev.timerEnabled,
+                        activeTimer: null, // Stop any active timer when toggling
+                      }));
+                    }}
+                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
+                      appState.timerEnabled ? 'bg-blue-600' : 'bg-gray-300 dark:bg-gray-600'
+                    }`}
+                  >
+                    <span
+                      className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                        appState.timerEnabled ? 'translate-x-6' : 'translate-x-1'
+                      }`}
+                    />
+                  </button>
+                  <span className="text-sm text-gray-600 dark:text-gray-400">Enabled</span>
+                </div>
+              </div>
+              
+              {appState.timerEnabled && (
+                <div>
+                  <h3 className="text-lg font-medium text-gray-700 dark:text-gray-300 mb-2">Timer Duration</h3>
+                  <p className="text-gray-600 dark:text-gray-400 text-sm mb-4">
+                    Set the duration for the timer that starts when a team member is selected. The timer will automatically reset when another member is selected.
+                  </p>
+                <div className="space-y-4">
+                  <div className="flex items-center gap-4">
+                    <label htmlFor="timer-duration" className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                      Duration (minutes):
+                    </label>
+                    <input
+                      id="timer-duration"
+                      type="number"
+                      min="1"
+                      max="60"
+                      value={Math.round(appState.timerDuration / 60)}
+                      onChange={(e) => {
+                        const minutes = parseInt(e.target.value) || 2;
+                        setAppState(prev => ({
+                          ...prev,
+                          timerDuration: minutes * 60,
+                        }));
+                      }}
+                      className="w-20 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
+                    />
+                  </div>
+                  <div className="text-sm text-gray-500 dark:text-gray-400">
+                    Current setting: {Math.round(appState.timerDuration / 60)} minute{Math.round(appState.timerDuration / 60) !== 1 ? 's' : ''}
+                  </div>
+                </div>
+                </div>
+              )}
+            </div>
+          </div>
+
           {/* Theme Configuration */}
           <div className="card">
             <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">Theme Settings</h2>
@@ -232,6 +308,7 @@ export default function SettingsPage() {
                   <li>• Add, edit, and remove team members</li>
                   <li>• Enable/disable team members for selection</li>
                   <li>• Random name selection with animations</li>
+                  <li>• Configurable timer for team member updates</li>
                   <li>• Share configurations via URL</li>
                   <li>• Responsive design for all devices</li>
                   <li>• Track blockers and updates for each team member</li>

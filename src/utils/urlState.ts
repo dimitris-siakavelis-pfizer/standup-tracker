@@ -3,6 +3,8 @@ import { AppState, ShareData } from '@/types';
 export function encodeState(state: AppState): string {
   const shareData: ShareData = {
     teamMembers: state.teamMembers,
+    timerEnabled: state.timerEnabled,
+    timerDuration: state.timerDuration,
   };
   return btoa(JSON.stringify(shareData));
 }

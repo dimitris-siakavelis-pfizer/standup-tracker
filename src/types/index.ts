@@ -10,10 +10,19 @@ export interface AppState {
   teamMembers: TeamMember[];
   selectedWinner: TeamMember | null;
   isSelecting: boolean;
+  timerEnabled: boolean;
+  timerDuration: number; // in seconds
+  activeTimer: {
+    memberId: string;
+    startTime: number;
+    duration: number;
+  } | null;
 }
 
 export type Theme = 'light' | 'dark';
 
 export interface ShareData {
   teamMembers: TeamMember[];
+  timerEnabled?: boolean;
+  timerDuration?: number;
 }
