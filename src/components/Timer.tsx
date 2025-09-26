@@ -7,9 +7,10 @@ interface TimerProps {
   duration: number; // in seconds
   onComplete?: () => void;
   className?: string;
+  showText?: boolean; // whether to show countdown text
 }
 
-export default function Timer({ isActive, duration, onComplete, className = '' }: TimerProps) {
+export default function Timer({ isActive, duration, onComplete, className = '', showText = false }: TimerProps) {
   const [timeLeft, setTimeLeft] = useState(duration);
 
   useEffect(() => {
@@ -48,6 +49,7 @@ export default function Timer({ isActive, duration, onComplete, className = '' }
   };
 
   const getProgressPercentage = (): number => {
+    if (duration === 0) return 0;
     return ((duration - timeLeft) / duration) * 100;
   };
 
@@ -62,42 +64,42 @@ export default function Timer({ isActive, duration, onComplete, className = '' }
     return null;
   }
 
-  return (
-    <div className={`flex items-center gap-2 ${className}`}>
-      <div className="relative w-8 h-8">
-        <svg className="w-8 h-8 transform -rotate-90" viewBox="0 0 36 36">
-          {/* Background circle */}
-          <path
-            d="M18 2.0845
-              a 15.9155 15.9155 0 0 1 0 31.831
-              a 15.9155 15.9155 0 0 1 0 -31.831"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            className="text-gray-300 dark:text-gray-600"
-          />
-          {/* Progress circle */}
-          <path
-            d="M18 2.0845
-              a 15.9155 15.9155 0 0 1 0 31.831
-              a 15.9155 15.9155 0 0 1 0 -31.831"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeDasharray={`${getProgressPercentage()}, 100`}
-            className={getTimerColor()}
-            strokeLinecap="round"
-          />
-        </svg>
-        <div className="absolute inset-0 flex items-center justify-center">
-          <span className={`text-xs font-medium ${getTimerColor()}`}>
-            {Math.ceil(timeLeft / 60)}
-          </span>
-        </div>
+  if (showText) {
+    return (
+      <div className={`${className}`}>
+        <span className={`text-sm font-mono ${getTimerColor()}`}>
+          {formatTime(timeLeft)}
+        </span>
       </div>
-      <span className={`text-sm font-mono ${getTimerColor()}`}>
-        {formatTime(timeLeft)}
-      </span>
+    );
+  }
+
+  return (
+    <div className={`${className}`}>
+      <svg className="w-6 h-6 transform -rotate-90" viewBox="0 0 24 24">
+        {/* Background circle */}
+        <path
+          d="M12 2
+            a 10 10 0 0 1 0 20
+            a 10 10 0 0 1 0 -20"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          className="text-gray-300 dark:text-gray-600"
+        />
+        {/* Progress circle */}
+        <path
+          d="M12 2
+            a 10 10 0 0 1 0 20
+            a 10 10 0 0 1 0 -20"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeDasharray={`${getProgressPercentage() * 0.628}, 62.8`}
+          className={getTimerColor()}
+          strokeLinecap="round"
+        />
+      </svg>
     </div>
   );
 }

@@ -212,11 +212,23 @@ export default function TeamUpdates({ teamMembers, onUpdateMember, blinkingMembe
               onClick={() => handleCardClick(member.id, member.updateGiven || false)}
             >
               <div className="flex items-center gap-3">
-                <div className={`w-2 h-2 rounded-full flex-shrink-0 transition-all duration-300 ${
-                  (member.blocker && member.blocker.trim() !== '')
-                    ? 'bg-red-500'
-                    : member.updateGiven ? 'bg-green-500' : 'bg-gray-300 dark:bg-gray-500'
-                } ${blinkingMembers.has(member.id) ? 'scale-150 bg-green-600' : ''}`}></div>
+                <div className="relative flex-shrink-0">
+                  <div className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                    (member.blocker && member.blocker.trim() !== '')
+                      ? 'bg-red-500'
+                      : member.updateGiven ? 'bg-green-500' : 'bg-gray-300 dark:bg-gray-500'
+                  } ${blinkingMembers.has(member.id) ? 'scale-150 bg-green-600' : ''}`}></div>
+                  {timerEnabled && activeTimer?.memberId === member.id && (
+                    <div className="absolute -inset-2">
+                      <Timer
+                        isActive={true}
+                        duration={activeTimer.duration}
+                        onComplete={onStopTimer}
+                        className=""
+                      />
+                    </div>
+                  )}
+                </div>
                 
                 <div className="w-24 flex-shrink-0">
                   <h3 className={`font-medium text-sm truncate transition-all duration-300 ${
@@ -227,12 +239,14 @@ export default function TeamUpdates({ teamMembers, onUpdateMember, blinkingMembe
                     {member.name}
                   </h3>
                   {timerEnabled && activeTimer?.memberId === member.id && (
-                    <Timer
-                      isActive={true}
-                      duration={activeTimer.duration}
-                      onComplete={onStopTimer}
-                      className="mt-1"
-                    />
+                    <div className="mt-1">
+                      <Timer
+                        isActive={true}
+                        duration={activeTimer.duration}
+                        onComplete={onStopTimer}
+                        showText={true}
+                      />
+                    </div>
                   )}
                 </div>
                 
