@@ -160,12 +160,21 @@ export default function TeamUpdates({ teamMembers, onUpdateMember, blinkingMembe
   };
 
   const handleBlockerChange = (id: string, blocker: string) => {
-    onUpdateMember(id, { blocker });
+    onUpdateMember(id, { blocker, updateGiven: true });
   };
 
 
 
   const handleCardClick = (id: string, currentUpdateGiven: boolean) => {
+    // Find the member to check if they have blocker text
+    const member = enabledMembers.find(m => m.id === id);
+    const hasBlockerText = member?.blocker && member.blocker.trim() !== '';
+    
+    // If they have blocker text, don't allow unchecking (always keep updateGiven as true)
+    if (hasBlockerText && currentUpdateGiven) {
+      return; // Don't change the status if they have blockers and are currently marked as updated
+    }
+    
     const newUpdateGiven = !currentUpdateGiven;
     onUpdateMember(id, { updateGiven: newUpdateGiven });
     
