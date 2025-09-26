@@ -15,6 +15,7 @@ interface TeamUpdatesProps {
   completedTimers: Set<string>;
   onStartTimer: (memberId: string) => void;
   onStopTimer: () => void;
+  onClearCompletedTimer: (memberId: string) => void;
 }
 
 interface AutoScrollingInputProps {
@@ -140,9 +141,23 @@ function AutoScrollingInput({ value, onChange, placeholder, className, overlayTe
   );
 }
 
-export default function TeamUpdates({ teamMembers, onUpdateMember, blinkingMembers, setBlinkingMembers, timerEnabled, activeTimer, completedTimers, onStartTimer, onStopTimer }: TeamUpdatesProps) {
+export default function TeamUpdates({ teamMembers, onUpdateMember, blinkingMembers, setBlinkingMembers, timerEnabled, activeTimer, completedTimers, onStartTimer, onStopTimer, onClearCompletedTimer }: TeamUpdatesProps) {
   const enabledMembers = teamMembers.filter(member => member.enabled);
   const updatedMembers = enabledMembers.filter(member => member.updateGiven);
+  
+  // Check if this member is the last one to give an update
+  const isLastPerson = (memberId: string) => {
+    const currentMember = enabledMembers.find(m => m.id === memberId);
+    if (!currentMember) return false;
+    
+    // Count how many other members have given updates
+    const otherMembersUpdated = enabledMembers
+      .filter(m => m.id !== memberId)
+      .filter(m => m.updateGiven).length;
+    
+    // This is the last person if all other members have given updates
+    return otherMembersUpdated === enabledMembers.length - 1;
+  };
 
   const handleBlockerChange = (id: string, blocker: string) => {
     onUpdateMember(id, { blocker });
@@ -225,7 +240,9 @@ export default function TeamUpdates({ teamMembers, onUpdateMember, blinkingMembe
                         isActive={activeTimer?.memberId === member.id}
                         duration={activeTimer?.duration || 120}
                         onComplete={onStopTimer}
+                        onAutoHide={() => onClearCompletedTimer(member.id)}
                         className=""
+                        isLastPerson={isLastPerson(member.id)}
                       />
                     </div>
                   )}
@@ -245,7 +262,9 @@ export default function TeamUpdates({ teamMembers, onUpdateMember, blinkingMembe
                         isActive={activeTimer?.memberId === member.id}
                         duration={activeTimer?.duration || 120}
                         onComplete={onStopTimer}
+                        onAutoHide={() => onClearCompletedTimer(member.id)}
                         showText={true}
+                        isLastPerson={isLastPerson(member.id)}
                       />
                     </div>
                   )}

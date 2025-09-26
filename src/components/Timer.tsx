@@ -6,11 +6,13 @@ interface TimerProps {
   isActive: boolean;
   duration: number; // in seconds
   onComplete?: () => void;
+  onAutoHide?: () => void; // called when timer auto-hides for last person
   className?: string;
   showText?: boolean; // whether to show countdown text
+  isLastPerson?: boolean; // whether this is the last person giving an update
 }
 
-export default function Timer({ isActive, duration, onComplete, className = '', showText = false }: TimerProps) {
+export default function Timer({ isActive, duration, onComplete, onAutoHide, className = '', showText = false, isLastPerson = false }: TimerProps) {
   const [timeLeft, setTimeLeft] = useState(duration);
   const [hasCompleted, setHasCompleted] = useState(false);
 
@@ -25,6 +27,7 @@ export default function Timer({ isActive, duration, onComplete, className = '', 
       setTimeLeft((prev) => {
         if (prev <= 1) {
           setHasCompleted(true);
+          clearInterval(interval); // Stop the interval when timer completes
           return 0;
         }
         return prev - 1;
@@ -40,6 +43,18 @@ export default function Timer({ isActive, duration, onComplete, className = '', 
       onComplete?.();
     }
   }, [isActive, timeLeft, onComplete, hasCompleted]);
+
+  // Auto-hide timer after 5 seconds if it's the last person
+  useEffect(() => {
+    if (hasCompleted && isLastPerson) {
+      const timeout = setTimeout(() => {
+        setHasCompleted(false);
+        onAutoHide?.(); // Notify parent to remove from completedTimers
+      }, 5000); // Hide after 5 seconds
+      
+      return () => clearTimeout(timeout);
+    }
+  }, [hasCompleted, isLastPerson, onAutoHide]);
 
 
   useEffect(() => {

@@ -118,6 +118,14 @@ export default function Home() {
     }));
   };
 
+  const clearCompletedTimer = (memberId: string) => {
+    setCompletedTimers(prev => {
+      const newSet = new Set(prev);
+      newSet.delete(memberId);
+      return newSet;
+    });
+  };
+
 
 
 
@@ -178,6 +186,7 @@ export default function Home() {
               completedTimers={completedTimers}
               onStartTimer={startTimer}
               onStopTimer={stopTimer}
+              onClearCompletedTimer={clearCompletedTimer}
             />
           </div>
         </div>
@@ -205,6 +214,7 @@ export default function Home() {
             completedTimers={completedTimers}
             onStartTimer={startTimer}
             onStopTimer={stopTimer}
+            onClearCompletedTimer={clearCompletedTimer}
           />
         </div>
       </main>
