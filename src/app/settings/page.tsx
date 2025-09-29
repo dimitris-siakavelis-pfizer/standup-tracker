@@ -93,6 +93,12 @@ export default function SettingsPage() {
     const lines = appState.teamMembers
       .filter(member => (member.blocker && member.blocker.trim() !== ''))
       .map(member => `- ${member.name}: ${member.blocker!.trim()}`);
+    
+    // If no blockers exist, add a "None!" message
+    if (lines.length === 0) {
+      lines.push('- None!');
+    }
+    
     const text = [header, ...lines].join('\n');
 
     try {
