@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { TeamMember, AppState } from '@/types';
 import { getStateFromURL, updateURL, encodeState } from '@/utils/urlState';
 import NameList from '@/components/NameList';
@@ -18,6 +18,7 @@ export default function Home() {
   });
   const [blinkingMembers, setBlinkingMembers] = useState<Set<string>>(new Set());
   const [completedTimers, setCompletedTimers] = useState<Set<string>>(new Set());
+  const teamUpdatesRef = useRef<HTMLDivElement>(null);
 
   // Load state from URL on mount
   useEffect(() => {
@@ -93,10 +94,20 @@ export default function Home() {
       setBlinkingMembers(new Set());
     }, 1500);
 
-    // Start timer for the selected winner after 3 seconds
+    // Start timer for the selected winner after 4 seconds
     setTimeout(() => {
       startTimer(winner.id);
-    }, 3000);
+    }, 4000);
+
+    // Scroll to Team Updates on mobile after 4 seconds
+    setTimeout(() => {
+      if (teamUpdatesRef.current && window.innerWidth < 1024) { // lg breakpoint
+        teamUpdatesRef.current.scrollIntoView({ 
+          behavior: 'smooth',
+          block: 'start'
+        });
+      }
+    }, 4000);
   };
 
   const startTimer = (memberId: string) => {
@@ -215,18 +226,20 @@ export default function Home() {
             teamMembers={appState.teamMembers}
             onUpdateMembers={updateTeamMembers}
           />
-          <TeamUpdates
-            teamMembers={appState.teamMembers}
-            onUpdateMember={updateMember}
-            blinkingMembers={blinkingMembers}
-            setBlinkingMembers={setBlinkingMembers}
-            timerEnabled={appState.timerEnabled}
-            activeTimer={appState.activeTimer}
-            completedTimers={completedTimers}
-            onStartTimer={startTimer}
-            onStopTimer={stopTimer}
-            onClearCompletedTimer={clearCompletedTimer}
-          />
+          <div ref={teamUpdatesRef}>
+            <TeamUpdates
+              teamMembers={appState.teamMembers}
+              onUpdateMember={updateMember}
+              blinkingMembers={blinkingMembers}
+              setBlinkingMembers={setBlinkingMembers}
+              timerEnabled={appState.timerEnabled}
+              activeTimer={appState.activeTimer}
+              completedTimers={completedTimers}
+              onStartTimer={startTimer}
+              onStopTimer={stopTimer}
+              onClearCompletedTimer={clearCompletedTimer}
+            />
+          </div>
         </div>
       </main>
 
