@@ -57,9 +57,15 @@ export default function Home() {
   };
 
   const startSelection = () => {
+    // Clear any active timer when starting new selection
+    if (appState.activeTimer) {
+      setCompletedTimers(prev => new Set([...Array.from(prev), appState.activeTimer!.memberId]));
+    }
+    
     setAppState(prev => ({
       ...prev,
       isSelecting: true,
+      activeTimer: null, // Clear active timer
       teamMembers: prev.teamMembers.map(member => ({
         ...member,
         updateGiven: false,
@@ -86,6 +92,11 @@ export default function Home() {
     setTimeout(() => {
       setBlinkingMembers(new Set());
     }, 1500);
+
+    // Start timer for the selected winner after 3 seconds
+    setTimeout(() => {
+      startTimer(winner.id);
+    }, 3000);
   };
 
   const startTimer = (memberId: string) => {
