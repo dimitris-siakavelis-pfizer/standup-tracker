@@ -291,9 +291,6 @@ export default function SettingsPage() {
                       className="w-20 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
                     />
                   </div>
-                  <div className="text-sm text-gray-500 dark:text-gray-400">
-                    Current setting: {Math.floor(appState.timerDuration / 60)} minute{Math.floor(appState.timerDuration / 60) !== 1 ? 's' : ''} {appState.timerDuration % 60} second{(appState.timerDuration % 60) !== 1 ? 's' : ''}
-                  </div>
                 </div>
                 </div>
               )}
