@@ -248,27 +248,51 @@ export default function SettingsPage() {
                   </p>
                 <div className="space-y-4">
                   <div className="flex items-center gap-4">
-                    <label htmlFor="timer-duration" className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                      Duration (minutes):
+                    <label htmlFor="timer-minutes" className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                      Minutes:
                     </label>
                     <input
-                      id="timer-duration"
+                      id="timer-minutes"
                       type="number"
-                      min="1"
-                      max="60"
-                      value={Math.round(appState.timerDuration / 60)}
+                      min="0"
+                      max="59"
+                      value={Math.floor(appState.timerDuration / 60)}
                       onChange={(e) => {
-                        const minutes = parseInt(e.target.value) || 2;
+                        const minutes = parseInt(e.target.value) || 0;
+                        const seconds = appState.timerDuration % 60;
+                        const totalSeconds = minutes * 60 + seconds;
+                        // Ensure minimum of 1 second
                         setAppState(prev => ({
                           ...prev,
-                          timerDuration: minutes * 60,
+                          timerDuration: Math.max(1, totalSeconds),
+                        }));
+                      }}
+                      className="w-20 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
+                    />
+                    <label htmlFor="timer-seconds" className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                      Seconds:
+                    </label>
+                    <input
+                      id="timer-seconds"
+                      type="number"
+                      min="0"
+                      max="59"
+                      value={appState.timerDuration % 60}
+                      onChange={(e) => {
+                        const seconds = parseInt(e.target.value) || 0;
+                        const minutes = Math.floor(appState.timerDuration / 60);
+                        const totalSeconds = minutes * 60 + seconds;
+                        // Ensure minimum of 1 second
+                        setAppState(prev => ({
+                          ...prev,
+                          timerDuration: Math.max(1, totalSeconds),
                         }));
                       }}
                       className="w-20 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
                     />
                   </div>
                   <div className="text-sm text-gray-500 dark:text-gray-400">
-                    Current setting: {Math.round(appState.timerDuration / 60)} minute{Math.round(appState.timerDuration / 60) !== 1 ? 's' : ''}
+                    Current setting: {Math.floor(appState.timerDuration / 60)} minute{Math.floor(appState.timerDuration / 60) !== 1 ? 's' : ''} {appState.timerDuration % 60} second{(appState.timerDuration % 60) !== 1 ? 's' : ''}
                   </div>
                 </div>
                 </div>
