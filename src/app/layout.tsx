@@ -8,6 +8,10 @@ const inter = Inter({ subsets: ['latin'] })
 export const metadata: Metadata = {
   title: 'Daily Stand Up Tracker',
   description: 'A web-based tool for managing daily stand up meetings with random name selection',
+  icons: {
+    icon: '/standup-tracker/icon.svg',
+    shortcut: '/standup-tracker/icon.svg',
+  },
 }
 
 export default function RootLayout({
