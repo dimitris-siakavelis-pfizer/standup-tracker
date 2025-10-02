@@ -196,7 +196,7 @@ export default function Home() {
       await navigator.clipboard.writeText(text);
       setShowCopiedDSU(true);
       setTimeout(() => setShowCopiedDSU(false), 2000);
-    } catch (error) {
+    } catch {
       // Fallback
       const temp = document.createElement('textarea');
       temp.value = text;
