@@ -5,6 +5,7 @@ export function encodeState(state: AppState): string {
     teamMembers: state.teamMembers,
     timerEnabled: state.timerEnabled,
     timerDuration: state.timerDuration,
+    explosionEnabled: state.explosionEnabled,
   };
   return btoa(JSON.stringify(shareData));
 }

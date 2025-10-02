@@ -12,6 +12,7 @@ export interface AppState {
   isSelecting: boolean;
   timerEnabled: boolean;
   timerDuration: number; // in seconds
+  explosionEnabled: boolean;
   activeTimer: {
     memberId: string;
     startTime: number;
@@ -25,4 +26,5 @@ export interface ShareData {
   teamMembers: TeamMember[];
   timerEnabled?: boolean;
   timerDuration?: number;
+  explosionEnabled?: boolean;
 }

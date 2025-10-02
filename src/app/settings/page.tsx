@@ -12,6 +12,7 @@ export default function SettingsPage() {
     isSelecting: false,
     timerEnabled: true,
     timerDuration: 120, // 2 minutes default
+    explosionEnabled: true,
     activeTimer: null,
   });
   const [showCopied, setShowCopied] = useState(false);
@@ -27,6 +28,7 @@ export default function SettingsPage() {
         isSelecting: false,
         timerEnabled: urlState.timerEnabled !== undefined ? urlState.timerEnabled : true,
         timerDuration: urlState.timerDuration || 120,
+        explosionEnabled: urlState.explosionEnabled !== undefined ? urlState.explosionEnabled : true,
         activeTimer: null,
       };
       setAppState(newState);
@@ -220,11 +222,16 @@ export default function SettingsPage() {
                   <span className="text-sm text-gray-600 dark:text-gray-400">Disabled</span>
                   <button
                     onClick={() => {
-                      setAppState(prev => ({
-                        ...prev,
-                        timerEnabled: !prev.timerEnabled,
-                        activeTimer: null, // Stop any active timer when toggling
-                      }));
+                      setAppState(prev => {
+                        const nextTimerEnabled = !prev.timerEnabled;
+                        return {
+                          ...prev,
+                          timerEnabled: nextTimerEnabled,
+                          // Auto-disable explosion when timer is turned off
+                          explosionEnabled: nextTimerEnabled ? prev.explosionEnabled : false,
+                          activeTimer: null, // Stop any active timer when toggling
+                        };
+                      });
                     }}
                     className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
                       appState.timerEnabled ? 'bg-blue-600' : 'bg-gray-300 dark:bg-gray-600'
@@ -292,6 +299,37 @@ export default function SettingsPage() {
                     />
                   </div>
                 </div>
+                </div>
+              )}
+
+              {appState.timerEnabled && (
+                <div>
+                  <h3 className="text-lg font-medium text-gray-700 dark:text-gray-300 mb-2">Enable Explosion</h3>
+                  <p className="text-gray-600 dark:text-gray-400 text-sm mb-4">
+                    Show a full-viewport explosion and confetti when the timer runs out.
+                  </p>
+                  <div className="flex items-center gap-4">
+                    <span className="text-sm text-gray-600 dark:text-gray-400">Disabled</span>
+                    <button
+                      onClick={() => {
+                        if (!appState.timerEnabled) return;
+                        setAppState(prev => ({
+                          ...prev,
+                          explosionEnabled: !prev.explosionEnabled,
+                        }));
+                      }}
+                      className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
+                        appState.explosionEnabled ? 'bg-blue-600' : 'bg-gray-300 dark:bg-gray-600'
+                      }`}
+                    >
+                      <span
+                        className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                          appState.explosionEnabled ? 'translate-x-6' : 'translate-x-1'
+                        }`}
+                      />
+                    </button>
+                    <span className="text-sm text-gray-600 dark:text-gray-400">Enabled</span>
+                  </div>
                 </div>
               )}
             </div>

@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
+import { createPortal } from 'react-dom';
 
 interface TimerProps {
   isActive: boolean;
@@ -10,16 +11,21 @@ interface TimerProps {
   className?: string;
   showText?: boolean; // whether to show countdown text
   isLastPerson?: boolean; // whether this is the last person giving an update
+  explosionEnabled?: boolean; // whether to show full-viewport explosion
 }
 
-export default function Timer({ isActive, duration, onComplete, onAutoHide, className = '', showText = false, isLastPerson = false }: TimerProps) {
+export default function Timer({ isActive, duration, onComplete, onAutoHide, className = '', showText = false, isLastPerson = false, explosionEnabled = true }: TimerProps) {
   const [timeLeft, setTimeLeft] = useState(duration);
   const [hasCompleted, setHasCompleted] = useState(false);
+  const [showExplosion, setShowExplosion] = useState(false);
+  const [showConfetti, setShowConfetti] = useState(false);
 
   useEffect(() => {
     if (!isActive) {
       setTimeLeft(duration);
       setHasCompleted(false);
+      setShowExplosion(false);
+      setShowConfetti(false);
       return;
     }
 
@@ -61,6 +67,23 @@ export default function Timer({ isActive, duration, onComplete, onAutoHide, clas
     setTimeLeft(duration);
   }, [duration]);
 
+  // Trigger explosion when time is up
+  useEffect(() => {
+    if (timeLeft === 0) {
+      setShowExplosion(true);
+      setShowConfetti(true);
+      const t1 = setTimeout(() => setShowExplosion(false), 3000);
+      const t2 = setTimeout(() => setShowConfetti(false), 3000);
+      return () => {
+        clearTimeout(t1);
+        clearTimeout(t2);
+      };
+    } else {
+      setShowExplosion(false);
+      setShowConfetti(false);
+    }
+  }, [timeLeft]);
+
   const formatTime = (seconds: number): string => {
     if (seconds <= 0) return "Time's up!";
     const mins = Math.floor(seconds / 60);
@@ -82,22 +105,100 @@ export default function Timer({ isActive, duration, onComplete, onAutoHide, clas
     return 'text-red-600 dark:text-red-400';
   };
 
+  const shouldShowOverlay = showExplosion && explosionEnabled && showText;
+
+  const overlayConfettiPieces = useMemo(() => {
+    if (!shouldShowOverlay) return [] as Array<{ tx: number; ty: number; size: number; color: string }>;
+    const colors = ['#ef4444', '#f59e0b', '#10b981', '#3b82f6', '#8b5cf6', '#ec4899'];
+    const pieces: Array<{ tx: number; ty: number; size: number; color: string }> = [];
+    const count = 36;
+    for (let i = 0; i < count; i++) {
+      const angle = (i / count) * Math.PI * 2 + (Math.random() * 12 - 6) * (Math.PI / 180);
+      const radius = 140 + Math.random() * 180; // px
+      const tx = Math.cos(angle) * radius;
+      const ty = Math.sin(angle) * radius;
+      const size = 8 + Math.floor(Math.random() * 6); // 8-13px
+      const color = colors[i % colors.length];
+      pieces.push({ tx, ty, size, color });
+    }
+    return pieces;
+  }, [shouldShowOverlay]);
+
+  // Add/remove screen shake while overlay is visible (target #app-root to avoid affecting fixed overlay)
+  useEffect(() => {
+    if (!shouldShowOverlay) return;
+    if (typeof document !== 'undefined') {
+      const root = document.getElementById('app-root');
+      root?.classList.add('screen-shake');
+      const t = setTimeout(() => {
+        root?.classList.remove('screen-shake');
+      }, 3000);
+      return () => {
+        clearTimeout(t);
+        root?.classList.remove('screen-shake');
+      };
+    }
+  }, [shouldShowOverlay]);
+
+  const overlay = shouldShowOverlay && typeof window !== 'undefined'
+    ? createPortal(
+        <div className="explosion-overlay fixed left-0 top-0 z-[9999] pointer-events-none">
+          <div className="absolute inset-0 explosion-backdrop" />
+          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+            <span className="block text-center explosion-emoji explosion-emoji--xl" aria-hidden="true">💥</span>
+            <span className="block mx-auto shockwave-ring shockwave-ring--xl" aria-hidden="true" />
+            <div className="confetti-burst relative w-0 h-0" aria-hidden="true">
+              {overlayConfettiPieces.map((p, idx) => (
+                <span
+                  key={idx}
+                  className="confetti-piece confetti-piece--long"
+                  style={{
+                    ['--tx' as unknown as keyof React.CSSProperties]: `${Math.round(p.tx)}px` as unknown as never,
+                    ['--ty' as unknown as keyof React.CSSProperties]: `${Math.round(p.ty)}px` as unknown as never,
+                    width: `${p.size}px`,
+                    height: `${Math.round(p.size * 1.6)}px`,
+                    background: p.color,
+                  }}
+                />
+              ))}
+            </div>
+          </div>
+        </div>,
+        document.body
+      )
+    : null;
+
+  // Important: Only return after all hooks above have been called
   if (!isActive && !hasCompleted) {
     return null;
   }
 
   if (showText) {
     return (
-      <div className={`${className}`}>
+      <div className={`${className} relative inline-block`}>
         <span className={`text-sm font-mono ${getTimerColor()}`}>
           {formatTime(timeLeft)}
         </span>
+        {showExplosion && (
+          <>
+            <span className="absolute left-1/2 -translate-x-1/2 -top-6 explosion-emoji explosion-emoji--big" aria-hidden="true">💥</span>
+            <span className="absolute left-1/2 -translate-x-1/2 -top-5 shockwave-ring" aria-hidden="true" />
+          </>
+        )}
+        {showConfetti && (
+          <div className="confetti-burst absolute left-1/2 -translate-x-1/2 -top-8" aria-hidden="true">
+            {Array.from({ length: 12 }).map((_, i) => (
+              <span key={i} className="confetti-piece" />
+            ))}
+          </div>
+        )}
+        {overlay}
       </div>
     );
   }
 
   return (
-    <div className={`${className}`}>
+    <div className={`${className} relative inline-block`}>
       <svg className="w-6 h-6 transform -rotate-90" viewBox="0 0 24 24">
         {/* Background circle */}
         <path
@@ -122,6 +223,20 @@ export default function Timer({ isActive, duration, onComplete, onAutoHide, clas
           strokeLinecap="round"
         />
       </svg>
+      {showExplosion && (
+        <>
+          <span className="absolute left-1/2 -translate-x-1/2 -top-4 explosion-emoji explosion-emoji--big" aria-hidden="true">💥</span>
+          <span className="absolute left-1/2 -translate-x-1/2 -top-3 shockwave-ring" aria-hidden="true" />
+        </>
+      )}
+      {showConfetti && (
+        <div className="confetti-burst absolute left-1/2 -translate-x-1/2 -top-6" aria-hidden="true">
+          {Array.from({ length: 12 }).map((_, i) => (
+            <span key={i} className="confetti-piece" />
+          ))}
+        </div>
+      )}
+      {overlay}
     </div>
   );
 }

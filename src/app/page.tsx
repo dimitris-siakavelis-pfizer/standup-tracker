@@ -14,6 +14,7 @@ export default function Home() {
     isSelecting: false,
     timerEnabled: true,
     timerDuration: 120, // 2 minutes default
+    explosionEnabled: true,
     activeTimer: null,
   });
   const [blinkingMembers, setBlinkingMembers] = useState<Set<string>>(new Set());
@@ -29,6 +30,7 @@ export default function Home() {
         teamMembers: urlState.teamMembers,
         timerEnabled: urlState.timerEnabled !== undefined ? urlState.timerEnabled : true,
         timerDuration: urlState.timerDuration || 120,
+        explosionEnabled: urlState.explosionEnabled !== undefined ? urlState.explosionEnabled : true,
         activeTimer: null, // Reset timer on load
       }));
     }
@@ -204,6 +206,7 @@ export default function Home() {
               blinkingMembers={blinkingMembers}
               setBlinkingMembers={setBlinkingMembers}
               timerEnabled={appState.timerEnabled}
+              explosionEnabled={appState.explosionEnabled}
               activeTimer={appState.activeTimer}
               completedTimers={completedTimers}
               onStartTimer={startTimer}
@@ -233,6 +236,7 @@ export default function Home() {
               blinkingMembers={blinkingMembers}
               setBlinkingMembers={setBlinkingMembers}
               timerEnabled={appState.timerEnabled}
+              explosionEnabled={appState.explosionEnabled}
               activeTimer={appState.activeTimer}
               completedTimers={completedTimers}
               onStartTimer={startTimer}

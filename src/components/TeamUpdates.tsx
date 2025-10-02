@@ -11,6 +11,7 @@ interface TeamUpdatesProps {
   blinkingMembers: Set<string>;
   setBlinkingMembers: React.Dispatch<React.SetStateAction<Set<string>>>;
   timerEnabled: boolean;
+  explosionEnabled: boolean;
   activeTimer: AppState['activeTimer'];
   completedTimers: Set<string>;
   onStartTimer: (memberId: string) => void;
@@ -141,7 +142,7 @@ function AutoScrollingInput({ value, onChange, placeholder, className, overlayTe
   );
 }
 
-export default function TeamUpdates({ teamMembers, onUpdateMember, blinkingMembers, setBlinkingMembers, timerEnabled, activeTimer, completedTimers, onStartTimer, onStopTimer, onClearCompletedTimer }: TeamUpdatesProps) {
+export default function TeamUpdates({ teamMembers, onUpdateMember, blinkingMembers, setBlinkingMembers, timerEnabled, explosionEnabled, activeTimer, completedTimers, onStartTimer, onStopTimer, onClearCompletedTimer }: TeamUpdatesProps) {
   const enabledMembers = teamMembers.filter(member => member.enabled);
   const updatedMembers = enabledMembers.filter(member => member.updateGiven);
   
@@ -251,6 +252,7 @@ export default function TeamUpdates({ teamMembers, onUpdateMember, blinkingMembe
                         onComplete={onStopTimer}
                         onAutoHide={() => onClearCompletedTimer(member.id)}
                         className=""
+                        explosionEnabled={explosionEnabled}
                         isLastPerson={isLastPerson(member.id)}
                       />
                     </div>
@@ -273,6 +275,7 @@ export default function TeamUpdates({ teamMembers, onUpdateMember, blinkingMembe
                         onComplete={onStopTimer}
                         onAutoHide={() => onClearCompletedTimer(member.id)}
                         showText={true}
+                        explosionEnabled={explosionEnabled}
                         isLastPerson={isLastPerson(member.id)}
                       />
                     </div>
