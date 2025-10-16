@@ -317,10 +317,15 @@ export default function SettingsPage() {
                     <button
                       onClick={() => {
                         if (!appState.timerEnabled) return;
-                        setAppState(prev => ({
-                          ...prev,
-                          explosionEnabled: !prev.explosionEnabled,
-                        }));
+                        setAppState(prev => {
+                          const nextExplosionEnabled = !prev.explosionEnabled;
+                          return {
+                            ...prev,
+                            explosionEnabled: nextExplosionEnabled,
+                            // Auto-disable rotating image when explosion is turned off
+                            rotatingImageEnabled: nextExplosionEnabled ? prev.rotatingImageEnabled : false,
+                          };
+                        });
                       }}
                       className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
                         appState.explosionEnabled ? 'bg-blue-600' : 'bg-gray-300 dark:bg-gray-600'
@@ -337,7 +342,7 @@ export default function SettingsPage() {
                 </div>
               )}
 
-              {appState.timerEnabled && (
+              {appState.timerEnabled && appState.explosionEnabled && (
                 <div>
                   <h3 className="text-lg font-medium text-gray-700 dark:text-gray-300 mb-2">Rotating Image</h3>
                   <p className="text-gray-600 dark:text-gray-400 text-sm mb-4">
