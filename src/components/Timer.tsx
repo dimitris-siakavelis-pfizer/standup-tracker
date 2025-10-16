@@ -12,13 +12,16 @@ interface TimerProps {
   showText?: boolean; // whether to show countdown text
   isLastPerson?: boolean; // whether this is the last person giving an update
   explosionEnabled?: boolean; // whether to show full-viewport explosion
+  rotatingImageEnabled?: boolean; // whether to show rotating image after explosion
+  rotatingImageUrl?: string; // URL of the rotating image
 }
 
-export default function Timer({ isActive, duration, onComplete, onAutoHide, className = '', showText = false, isLastPerson = false, explosionEnabled = true }: TimerProps) {
+export default function Timer({ isActive, duration, onComplete, onAutoHide, className = '', showText = false, isLastPerson = false, explosionEnabled = true, rotatingImageEnabled = false, rotatingImageUrl = '' }: TimerProps) {
   const [timeLeft, setTimeLeft] = useState(duration);
   const [hasCompleted, setHasCompleted] = useState(false);
   const [showExplosion, setShowExplosion] = useState(false);
   const [showConfetti, setShowConfetti] = useState(false);
+  const [showRotatingImage, setShowRotatingImage] = useState(false);
 
   useEffect(() => {
     if (!isActive) {
@@ -26,6 +29,7 @@ export default function Timer({ isActive, duration, onComplete, onAutoHide, clas
       setHasCompleted(false);
       setShowExplosion(false);
       setShowConfetti(false);
+      setShowRotatingImage(false);
       return;
     }
 
@@ -74,6 +78,17 @@ export default function Timer({ isActive, duration, onComplete, onAutoHide, clas
       setShowConfetti(true);
       const t1 = setTimeout(() => setShowExplosion(false), 3000);
       const t2 = setTimeout(() => setShowConfetti(false), 3000);
+      
+      // Show rotating image after explosion if enabled
+      if (rotatingImageEnabled && rotatingImageUrl) {
+        const t3 = setTimeout(() => setShowRotatingImage(true), 3000);
+        return () => {
+          clearTimeout(t1);
+          clearTimeout(t2);
+          clearTimeout(t3);
+        };
+      }
+      
       return () => {
         clearTimeout(t1);
         clearTimeout(t2);
@@ -81,8 +96,9 @@ export default function Timer({ isActive, duration, onComplete, onAutoHide, clas
     } else {
       setShowExplosion(false);
       setShowConfetti(false);
+      setShowRotatingImage(false);
     }
-  }, [timeLeft]);
+  }, [timeLeft, rotatingImageEnabled, rotatingImageUrl]);
 
   const formatTime = (seconds: number): string => {
     if (seconds <= 0) return "Time's up!";
@@ -106,6 +122,12 @@ export default function Timer({ isActive, duration, onComplete, onAutoHide, clas
   };
 
   const shouldShowOverlay = showExplosion && explosionEnabled && showText;
+  const shouldShowRotatingImageOverlay = showRotatingImage && rotatingImageEnabled && rotatingImageUrl && showText;
+
+  // Handle click to hide rotating image
+  const handleRotatingImageClick = () => {
+    setShowRotatingImage(false);
+  };
 
   const overlayConfettiPieces = useMemo(() => {
     if (!shouldShowOverlay) return [] as Array<{ tx: number; ty: number; size: number; color: string }>;
@@ -168,6 +190,25 @@ export default function Timer({ isActive, duration, onComplete, onAutoHide, clas
       )
     : null;
 
+  const rotatingImageOverlay = shouldShowRotatingImageOverlay && typeof window !== 'undefined'
+    ? createPortal(
+        <div 
+          className="fixed left-0 top-0 w-full h-full z-[9999] pointer-events-auto cursor-pointer"
+          onClick={handleRotatingImageClick}
+        >
+          <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+            <img 
+              src={rotatingImageUrl} 
+              alt="Rotating celebration" 
+              className="max-w-80 max-h-80 animate-spin"
+              style={{ animationDuration: '2s' }}
+            />
+          </div>
+        </div>,
+        document.body
+      )
+    : null;
+
   // Important: Only return after all hooks above have been called
   if (!isActive && !hasCompleted) {
     return null;
@@ -193,6 +234,7 @@ export default function Timer({ isActive, duration, onComplete, onAutoHide, clas
           </div>
         )}
         {overlay}
+        {rotatingImageOverlay}
       </div>
     );
   }
@@ -237,6 +279,7 @@ export default function Timer({ isActive, duration, onComplete, onAutoHide, clas
         </div>
       )}
       {overlay}
+      {rotatingImageOverlay}
     </div>
   );
 }

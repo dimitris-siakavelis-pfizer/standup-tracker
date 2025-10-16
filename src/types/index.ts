@@ -13,6 +13,8 @@ export interface AppState {
   timerEnabled: boolean;
   timerDuration: number; // in seconds
   explosionEnabled: boolean;
+  rotatingImageEnabled: boolean;
+  rotatingImageUrl: string;
   activeTimer: {
     memberId: string;
     startTime: number;
@@ -27,4 +29,6 @@ export interface ShareData {
   timerEnabled?: boolean;
   timerDuration?: number;
   explosionEnabled?: boolean;
+  rotatingImageEnabled?: boolean;
+  rotatingImageUrl?: string;
 }

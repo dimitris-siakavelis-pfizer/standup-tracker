@@ -13,6 +13,8 @@ export default function SettingsPage() {
     timerEnabled: true,
     timerDuration: 120, // 2 minutes default
     explosionEnabled: true,
+    rotatingImageEnabled: false,
+    rotatingImageUrl: 'https://media1.tenor.com/m/19R21_xO-v4AAAAC/bonz-hero.gif',
     activeTimer: null,
   });
   const [showCopied, setShowCopied] = useState(false);
@@ -29,6 +31,8 @@ export default function SettingsPage() {
         timerEnabled: urlState.timerEnabled !== undefined ? urlState.timerEnabled : true,
         timerDuration: urlState.timerDuration || 120,
         explosionEnabled: urlState.explosionEnabled !== undefined ? urlState.explosionEnabled : true,
+        rotatingImageEnabled: urlState.rotatingImageEnabled !== undefined ? urlState.rotatingImageEnabled : false,
+        rotatingImageUrl: urlState.rotatingImageUrl || 'https://media1.tenor.com/m/19R21_xO-v4AAAAC/bonz-hero.gif',
         activeTimer: null,
       };
       setAppState(newState);
@@ -330,6 +334,61 @@ export default function SettingsPage() {
                     </button>
                     <span className="text-sm text-gray-600 dark:text-gray-400">Enabled</span>
                   </div>
+                </div>
+              )}
+
+              {appState.timerEnabled && (
+                <div>
+                  <h3 className="text-lg font-medium text-gray-700 dark:text-gray-300 mb-2">Rotating Image</h3>
+                  <p className="text-gray-600 dark:text-gray-400 text-sm mb-4">
+                    Show a rotating image after the explosion effect ends. The image will continue rotating until you click anywhere.
+                  </p>
+                  <div className="flex items-center gap-4 mb-4">
+                    <span className="text-sm text-gray-600 dark:text-gray-400">Disabled</span>
+                    <button
+                      onClick={() => {
+                        if (!appState.timerEnabled) return;
+                        setAppState(prev => ({
+                          ...prev,
+                          rotatingImageEnabled: !prev.rotatingImageEnabled,
+                        }));
+                      }}
+                      className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
+                        appState.rotatingImageEnabled ? 'bg-blue-600' : 'bg-gray-300 dark:bg-gray-600'
+                      }`}
+                    >
+                      <span
+                        className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                          appState.rotatingImageEnabled ? 'translate-x-6' : 'translate-x-1'
+                        }`}
+                      />
+                    </button>
+                    <span className="text-sm text-gray-600 dark:text-gray-400">Enabled</span>
+                  </div>
+                  
+                  {appState.rotatingImageEnabled && (
+                    <div>
+                      <label htmlFor="rotating-image-url" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Image URL:
+                      </label>
+                      <input
+                        id="rotating-image-url"
+                        type="url"
+                        value={appState.rotatingImageUrl}
+                        onChange={(e) => {
+                          setAppState(prev => ({
+                            ...prev,
+                            rotatingImageUrl: e.target.value,
+                          }));
+                        }}
+                        placeholder="https://example.com/image.gif"
+                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
+                      />
+                      <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                        Enter a URL to an image or GIF. The image will be displayed and rotated after the explosion effect.
+                      </p>
+                    </div>
+                  )}
                 </div>
               )}
             </div>
