@@ -1,7 +1,10 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import { createPortal } from 'react-dom';
+
+// Global state to track if any after-explosion image is currently shown
+let globalAfterExplosionShown = false;
 
 interface TimerProps {
   isActive: boolean;
@@ -12,16 +15,22 @@ interface TimerProps {
   showText?: boolean; // whether to show countdown text
   isLastPerson?: boolean; // whether this is the last person giving an update
   explosionEnabled?: boolean; // whether to show full-viewport explosion
-  rotatingImageEnabled?: boolean; // whether to show rotating image after explosion
-  rotatingImageUrl?: string; // URL of the rotating image
+  afterExplosionImageEnabled?: boolean; // whether to show image after explosion
+  afterExplosionImageUrl?: string; // URL of the image
+  afterExplosionImageRotationEnabled?: boolean; // whether the image rotates
+  'data-timer-type'?: string; // for debugging
 }
 
-export default function Timer({ isActive, duration, onComplete, onAutoHide, className = '', showText = false, isLastPerson = false, explosionEnabled = true, rotatingImageEnabled = false, rotatingImageUrl = '' }: TimerProps) {
+export default function Timer({ isActive, duration, onComplete, onAutoHide, className = '', showText = false, isLastPerson = false, explosionEnabled = true, afterExplosionImageEnabled = false, afterExplosionImageUrl = '', afterExplosionImageRotationEnabled = false, 'data-timer-type': timerType = 'unknown' }: TimerProps) {
   const [timeLeft, setTimeLeft] = useState(duration);
   const [hasCompleted, setHasCompleted] = useState(false);
   const [showExplosion, setShowExplosion] = useState(false);
   const [showConfetti, setShowConfetti] = useState(false);
-  const [showRotatingImage, setShowRotatingImage] = useState(false);
+  const [showAfterExplosionImageOverlay, setShowAfterExplosionImageOverlay] = useState(false);
+  const afterExplosionImageShownRef = useRef(false);
+  
+  // Create a unique ID for this timer instance
+  const timerId = useRef(`${timerType}-${Date.now()}-${Math.random()}`);
 
   useEffect(() => {
     if (!isActive) {
@@ -29,9 +38,13 @@ export default function Timer({ isActive, duration, onComplete, onAutoHide, clas
       setHasCompleted(false);
       setShowExplosion(false);
       setShowConfetti(false);
-      setShowRotatingImage(false);
+      setShowAfterExplosionImageOverlay(false);
+      afterExplosionImageShownRef.current = false;
       return;
     }
+    
+    // Reset the ref when timer becomes active
+    afterExplosionImageShownRef.current = false;
 
     const interval = setInterval(() => {
       setTimeLeft((prev) => {
@@ -76,29 +89,42 @@ export default function Timer({ isActive, duration, onComplete, onAutoHide, clas
     if (timeLeft === 0) {
       setShowExplosion(true);
       setShowConfetti(true);
-      const t1 = setTimeout(() => setShowExplosion(false), 3000);
-      const t2 = setTimeout(() => setShowConfetti(false), 3000);
-      
-      // Show rotating image after explosion if enabled
-      if (rotatingImageEnabled && rotatingImageUrl) {
-        const t3 = setTimeout(() => setShowRotatingImage(true), 3000);
-        return () => {
-          clearTimeout(t1);
-          clearTimeout(t2);
-          clearTimeout(t3);
-        };
+      const overlayDelay = 3000;
+      const t1 = setTimeout(() => setShowExplosion(false), overlayDelay);
+      const t2 = setTimeout(() => setShowConfetti(false), overlayDelay);
+      let t3: ReturnType<typeof setTimeout> | undefined;
+
+      if (afterExplosionImageEnabled && afterExplosionImageUrl && showText && isActive && !afterExplosionImageShownRef.current && !globalAfterExplosionShown) {
+        console.log('🎯 Timer: Setting up after-explosion image', {
+          timerId: timerId.current,
+          timerType,
+          afterExplosionImageEnabled,
+          afterExplosionImageUrl,
+          showText,
+          isActive,
+          timeLeft,
+          memberId: 'unknown' // We'll add this later
+        });
+        afterExplosionImageShownRef.current = true;
+        globalAfterExplosionShown = true;
+        t3 = setTimeout(() => {
+          console.log('🎯 Timer: Showing after-explosion image overlay', { timerId: timerId.current, timerType });
+          setShowAfterExplosionImageOverlay(true);
+        }, overlayDelay);
       }
-      
+
       return () => {
         clearTimeout(t1);
         clearTimeout(t2);
+        if (t3) clearTimeout(t3);
       };
-    } else {
-      setShowExplosion(false);
-      setShowConfetti(false);
-      setShowRotatingImage(false);
     }
-  }, [timeLeft, rotatingImageEnabled, rotatingImageUrl]);
+
+    setShowExplosion(false);
+    setShowConfetti(false);
+    setShowAfterExplosionImageOverlay(false);
+    afterExplosionImageShownRef.current = false;
+  }, [timeLeft, afterExplosionImageEnabled, afterExplosionImageUrl, showText]);
 
   const formatTime = (seconds: number): string => {
     if (seconds <= 0) return "Time's up!";
@@ -122,12 +148,37 @@ export default function Timer({ isActive, duration, onComplete, onAutoHide, clas
   };
 
   const shouldShowOverlay = showExplosion && explosionEnabled && showText;
-  const shouldShowRotatingImageOverlay = showRotatingImage && rotatingImageEnabled && rotatingImageUrl && showText;
+  const shouldShowAfterExplosionImageOverlay = showAfterExplosionImageOverlay && afterExplosionImageEnabled && afterExplosionImageUrl && showText;
+  
+  // Debug logging for overlay state
+  useEffect(() => {
+    if (shouldShowAfterExplosionImageOverlay) {
+      console.log('🎯 Timer: Overlay should be visible', {
+        showAfterExplosionImageOverlay,
+        afterExplosionImageEnabled,
+        afterExplosionImageUrl,
+        showText,
+        isActive
+      });
+    }
+  }, [shouldShowAfterExplosionImageOverlay, showAfterExplosionImageOverlay, afterExplosionImageEnabled, afterExplosionImageUrl, showText, isActive]);
 
-  // Handle click to hide rotating image
-  const handleRotatingImageClick = () => {
-    setShowRotatingImage(false);
-  };
+  // Prevent clicks from bubbling up when overlay is visible
+  const blockOverlayPropagation = useCallback((event: React.SyntheticEvent) => {
+    event.stopPropagation();
+    const nativeEvent = event.nativeEvent as Event & { stopImmediatePropagation?: () => void };
+    nativeEvent.stopImmediatePropagation?.();
+  }, []);
+
+  const handleOverlayClick = useCallback((event: React.MouseEvent) => {
+    console.log('🎯 Timer: Overlay clicked, dismissing', { timerId: timerId.current, timerType });
+    event.preventDefault();
+    event.stopPropagation();
+    const nativeEvent = event.nativeEvent as Event & { stopImmediatePropagation?: () => void };
+    nativeEvent.stopImmediatePropagation?.();
+    setShowAfterExplosionImageOverlay(false);
+    globalAfterExplosionShown = false;
+  }, [timerType]);
 
   const overlayConfettiPieces = useMemo(() => {
     if (!shouldShowOverlay) return [] as Array<{ tx: number; ty: number; size: number; color: string }>;
@@ -190,18 +241,19 @@ export default function Timer({ isActive, duration, onComplete, onAutoHide, clas
       )
     : null;
 
-  const rotatingImageOverlay = shouldShowRotatingImageOverlay && typeof window !== 'undefined'
+  const afterExplosionImageOverlay = shouldShowAfterExplosionImageOverlay && typeof window !== 'undefined'
     ? createPortal(
         <div 
           className="fixed left-0 top-0 w-full h-full z-[9999] pointer-events-auto cursor-pointer"
-          onClick={handleRotatingImageClick}
+          onClick={handleOverlayClick}
         >
           <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img 
-              src={rotatingImageUrl} 
-              alt="Rotating celebration" 
-              className="max-w-80 max-h-80 animate-spin"
-              style={{ animationDuration: '2s' }}
+              src={afterExplosionImageUrl} 
+              alt="After explosion celebration" 
+              className={`max-w-80 max-h-80 ${afterExplosionImageRotationEnabled ? 'animate-spin' : ''}`}
+              style={afterExplosionImageRotationEnabled ? { animationDuration: '2s' } : undefined}
             />
           </div>
         </div>,
@@ -234,7 +286,7 @@ export default function Timer({ isActive, duration, onComplete, onAutoHide, clas
           </div>
         )}
         {overlay}
-        {rotatingImageOverlay}
+        {afterExplosionImageOverlay}
       </div>
     );
   }
@@ -279,7 +331,7 @@ export default function Timer({ isActive, duration, onComplete, onAutoHide, clas
         </div>
       )}
       {overlay}
-      {rotatingImageOverlay}
+      {afterExplosionImageOverlay}
     </div>
   );
 }

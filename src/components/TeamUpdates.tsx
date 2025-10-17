@@ -12,8 +12,9 @@ interface TeamUpdatesProps {
   setBlinkingMembers: React.Dispatch<React.SetStateAction<Set<string>>>;
   timerEnabled: boolean;
   explosionEnabled: boolean;
-  rotatingImageEnabled: boolean;
-  rotatingImageUrl: string;
+  afterExplosionImageEnabled: boolean;
+  afterExplosionImageUrl: string;
+  afterExplosionImageRotationEnabled: boolean;
   activeTimer: AppState['activeTimer'];
   completedTimers: Set<string>;
   onStartTimer: (memberId: string) => void;
@@ -144,7 +145,7 @@ function AutoScrollingInput({ value, onChange, placeholder, className, overlayTe
   );
 }
 
-export default function TeamUpdates({ teamMembers, onUpdateMember, blinkingMembers, setBlinkingMembers, timerEnabled, explosionEnabled, rotatingImageEnabled, rotatingImageUrl, activeTimer, completedTimers, onStartTimer, onStopTimer, onClearCompletedTimer }: TeamUpdatesProps) {
+export default function TeamUpdates({ teamMembers, onUpdateMember, blinkingMembers, setBlinkingMembers, timerEnabled, explosionEnabled, afterExplosionImageEnabled, afterExplosionImageUrl, afterExplosionImageRotationEnabled, activeTimer, completedTimers, onStartTimer, onStopTimer, onClearCompletedTimer }: TeamUpdatesProps) {
   const enabledMembers = teamMembers.filter(member => member.enabled);
   const updatedMembers = enabledMembers.filter(member => member.updateGiven);
   
@@ -248,16 +249,26 @@ export default function TeamUpdates({ teamMembers, onUpdateMember, blinkingMembe
                   } ${blinkingMembers.has(member.id) ? 'scale-150 bg-green-600' : ''}`}></div>
                   {timerEnabled && (activeTimer?.memberId === member.id || completedTimers.has(member.id)) && (
                     <div className="absolute -inset-2">
+                      {console.log('🎯 TeamUpdates: Rendering circular timer for member', {
+                        memberId: member.id,
+                        memberName: member.name,
+                        isActive: activeTimer?.memberId === member.id,
+                        isCompleted: completedTimers.has(member.id),
+                        afterExplosionImageEnabled: false
+                      })}
                       <Timer
+                        key={`circular-timer-${member.id}`}
                         isActive={activeTimer?.memberId === member.id}
                         duration={activeTimer?.duration || 120}
                         onComplete={onStopTimer}
                         onAutoHide={() => onClearCompletedTimer(member.id)}
                         className=""
                         explosionEnabled={explosionEnabled}
-                        rotatingImageEnabled={rotatingImageEnabled}
-                        rotatingImageUrl={rotatingImageUrl}
+                        afterExplosionImageEnabled={false}
+                        afterExplosionImageUrl=""
+                        afterExplosionImageRotationEnabled={false}
                         isLastPerson={isLastPerson(member.id)}
+                        data-timer-type="circular"
                       />
                     </div>
                   )}
@@ -273,16 +284,26 @@ export default function TeamUpdates({ teamMembers, onUpdateMember, blinkingMembe
                   </h3>
                   {timerEnabled && (activeTimer?.memberId === member.id || completedTimers.has(member.id)) && (
                     <div className="mt-1">
+                      {console.log('🎯 TeamUpdates: Rendering text timer for member', {
+                        memberId: member.id,
+                        memberName: member.name,
+                        isActive: activeTimer?.memberId === member.id,
+                        isCompleted: completedTimers.has(member.id),
+                        afterExplosionImageEnabled: activeTimer?.memberId === member.id ? afterExplosionImageEnabled : false
+                      })}
                       <Timer
+                        key={`text-timer-${member.id}`}
                         isActive={activeTimer?.memberId === member.id}
                         duration={activeTimer?.duration || 120}
                         onComplete={onStopTimer}
                         onAutoHide={() => onClearCompletedTimer(member.id)}
                         showText={true}
                         explosionEnabled={explosionEnabled}
-                        rotatingImageEnabled={rotatingImageEnabled}
-                        rotatingImageUrl={rotatingImageUrl}
+                        afterExplosionImageEnabled={activeTimer?.memberId === member.id ? afterExplosionImageEnabled : false}
+                        afterExplosionImageUrl={activeTimer?.memberId === member.id ? afterExplosionImageUrl : ""}
+                        afterExplosionImageRotationEnabled={activeTimer?.memberId === member.id ? afterExplosionImageRotationEnabled : false}
                         isLastPerson={isLastPerson(member.id)}
+                        data-timer-type="text"
                       />
                     </div>
                   )}

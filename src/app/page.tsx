@@ -15,8 +15,9 @@ export default function Home() {
     timerEnabled: true,
     timerDuration: 120, // 2 minutes default
     explosionEnabled: true,
-    rotatingImageEnabled: false,
-    rotatingImageUrl: 'https://media1.tenor.com/m/19R21_xO-v4AAAAC/bonz-hero.gif',
+    afterExplosionImageEnabled: false,
+    afterExplosionImageUrl: 'https://media1.tenor.com/m/19R21_xO-v4AAAAC/bonz-hero.gif',
+    afterExplosionImageRotationEnabled: false,
     activeTimer: null,
   });
   const [blinkingMembers, setBlinkingMembers] = useState<Set<string>>(new Set());
@@ -34,8 +35,15 @@ export default function Home() {
         timerEnabled: urlState.timerEnabled !== undefined ? urlState.timerEnabled : true,
         timerDuration: urlState.timerDuration || 120,
         explosionEnabled: urlState.explosionEnabled !== undefined ? urlState.explosionEnabled : true,
-        rotatingImageEnabled: urlState.rotatingImageEnabled !== undefined ? urlState.rotatingImageEnabled : false,
-        rotatingImageUrl: urlState.rotatingImageUrl || 'https://media1.tenor.com/m/19R21_xO-v4AAAAC/bonz-hero.gif',
+        afterExplosionImageEnabled: urlState.afterExplosionImageEnabled !== undefined
+          ? urlState.afterExplosionImageEnabled
+          : (urlState.rotatingImageEnabled !== undefined ? urlState.rotatingImageEnabled : false),
+        afterExplosionImageUrl: urlState.afterExplosionImageUrl
+          || urlState.rotatingImageUrl
+          || 'https://media1.tenor.com/m/19R21_xO-v4AAAAC/bonz-hero.gif',
+        afterExplosionImageRotationEnabled: urlState.afterExplosionImageRotationEnabled !== undefined
+          ? urlState.afterExplosionImageRotationEnabled
+          : urlState.rotatingImageEnabled ? true : false,
         activeTimer: null, // Reset timer on load
       }));
     }
@@ -268,8 +276,9 @@ export default function Home() {
               setBlinkingMembers={setBlinkingMembers}
               timerEnabled={appState.timerEnabled}
               explosionEnabled={appState.explosionEnabled}
-              rotatingImageEnabled={appState.rotatingImageEnabled}
-              rotatingImageUrl={appState.rotatingImageUrl}
+              afterExplosionImageEnabled={appState.afterExplosionImageEnabled}
+              afterExplosionImageUrl={appState.afterExplosionImageUrl}
+              afterExplosionImageRotationEnabled={appState.afterExplosionImageRotationEnabled}
               activeTimer={appState.activeTimer}
               completedTimers={completedTimers}
               onStartTimer={startTimer}
@@ -326,8 +335,9 @@ export default function Home() {
               setBlinkingMembers={setBlinkingMembers}
               timerEnabled={appState.timerEnabled}
               explosionEnabled={appState.explosionEnabled}
-              rotatingImageEnabled={appState.rotatingImageEnabled}
-              rotatingImageUrl={appState.rotatingImageUrl}
+              afterExplosionImageEnabled={appState.afterExplosionImageEnabled}
+              afterExplosionImageUrl={appState.afterExplosionImageUrl}
+              afterExplosionImageRotationEnabled={appState.afterExplosionImageRotationEnabled}
               activeTimer={appState.activeTimer}
               completedTimers={completedTimers}
               onStartTimer={startTimer}

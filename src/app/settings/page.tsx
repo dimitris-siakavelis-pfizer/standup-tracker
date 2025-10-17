@@ -13,8 +13,9 @@ export default function SettingsPage() {
     timerEnabled: true,
     timerDuration: 120, // 2 minutes default
     explosionEnabled: true,
-    rotatingImageEnabled: false,
-    rotatingImageUrl: 'https://media1.tenor.com/m/19R21_xO-v4AAAAC/bonz-hero.gif',
+    afterExplosionImageEnabled: false,
+    afterExplosionImageUrl: 'https://media1.tenor.com/m/19R21_xO-v4AAAAC/bonz-hero.gif',
+    afterExplosionImageRotationEnabled: false,
     activeTimer: null,
   });
   const [showCopied, setShowCopied] = useState(false);
@@ -31,8 +32,15 @@ export default function SettingsPage() {
         timerEnabled: urlState.timerEnabled !== undefined ? urlState.timerEnabled : true,
         timerDuration: urlState.timerDuration || 120,
         explosionEnabled: urlState.explosionEnabled !== undefined ? urlState.explosionEnabled : true,
-        rotatingImageEnabled: urlState.rotatingImageEnabled !== undefined ? urlState.rotatingImageEnabled : false,
-        rotatingImageUrl: urlState.rotatingImageUrl || 'https://media1.tenor.com/m/19R21_xO-v4AAAAC/bonz-hero.gif',
+        afterExplosionImageEnabled: urlState.afterExplosionImageEnabled !== undefined
+          ? urlState.afterExplosionImageEnabled
+          : (urlState.rotatingImageEnabled !== undefined ? urlState.rotatingImageEnabled : false),
+        afterExplosionImageUrl: urlState.afterExplosionImageUrl
+          || urlState.rotatingImageUrl
+          || 'https://media1.tenor.com/m/19R21_xO-v4AAAAC/bonz-hero.gif',
+        afterExplosionImageRotationEnabled: urlState.afterExplosionImageRotationEnabled !== undefined
+          ? urlState.afterExplosionImageRotationEnabled
+          : urlState.rotatingImageEnabled ? true : false,
         activeTimer: null,
       };
       setAppState(newState);
@@ -322,8 +330,9 @@ export default function SettingsPage() {
                           return {
                             ...prev,
                             explosionEnabled: nextExplosionEnabled,
-                            // Auto-disable rotating image when explosion is turned off
-                            rotatingImageEnabled: nextExplosionEnabled ? prev.rotatingImageEnabled : false,
+                            // Auto-disable after explosion image when explosion is turned off
+                            afterExplosionImageEnabled: nextExplosionEnabled ? prev.afterExplosionImageEnabled : false,
+                            afterExplosionImageRotationEnabled: nextExplosionEnabled ? prev.afterExplosionImageRotationEnabled : false,
                           };
                         });
                       }}
@@ -344,9 +353,9 @@ export default function SettingsPage() {
 
               {appState.timerEnabled && appState.explosionEnabled && (
                 <div>
-                  <h3 className="text-lg font-medium text-gray-700 dark:text-gray-300 mb-2">Rotating Image</h3>
+                  <h3 className="text-lg font-medium text-gray-700 dark:text-gray-300 mb-2">After Explosion Image</h3>
                   <p className="text-gray-600 dark:text-gray-400 text-sm mb-4">
-                    Show a rotating image after the explosion effect ends. The image will continue rotating until you click anywhere.
+                    Show an image after the explosion effect ends. You can optionally enable rotation. The overlay can be dismissed by clicking anywhere.
                   </p>
                   <div className="flex items-center gap-4 mb-4">
                     <span className="text-sm text-gray-600 dark:text-gray-400">Disabled</span>
@@ -355,43 +364,65 @@ export default function SettingsPage() {
                         if (!appState.timerEnabled) return;
                         setAppState(prev => ({
                           ...prev,
-                          rotatingImageEnabled: !prev.rotatingImageEnabled,
+                          afterExplosionImageEnabled: !prev.afterExplosionImageEnabled,
+                          afterExplosionImageRotationEnabled: prev.afterExplosionImageEnabled ? prev.afterExplosionImageRotationEnabled : false,
                         }));
                       }}
                       className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
-                        appState.rotatingImageEnabled ? 'bg-blue-600' : 'bg-gray-300 dark:bg-gray-600'
+                        appState.afterExplosionImageEnabled ? 'bg-blue-600' : 'bg-gray-300 dark:bg-gray-600'
                       }`}
                     >
                       <span
                         className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                          appState.rotatingImageEnabled ? 'translate-x-6' : 'translate-x-1'
+                          appState.afterExplosionImageEnabled ? 'translate-x-6' : 'translate-x-1'
                         }`}
                       />
                     </button>
                     <span className="text-sm text-gray-600 dark:text-gray-400">Enabled</span>
                   </div>
                   
-                  {appState.rotatingImageEnabled && (
+                  {appState.afterExplosionImageEnabled && (
                     <div>
-                      <label htmlFor="rotating-image-url" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      <label htmlFor="after-explosion-image-url" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                         Image URL:
                       </label>
                       <input
-                        id="rotating-image-url"
+                        id="after-explosion-image-url"
                         type="url"
-                        value={appState.rotatingImageUrl}
+                        value={appState.afterExplosionImageUrl}
                         onChange={(e) => {
                           setAppState(prev => ({
                             ...prev,
-                            rotatingImageUrl: e.target.value,
+                            afterExplosionImageUrl: e.target.value,
                           }));
                         }}
                         placeholder="https://example.com/image.gif"
                         className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
                       />
                       <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                        Enter a URL to an image or GIF. The image will be displayed and rotated after the explosion effect.
+                        Enter a URL to an image or GIF. The image will be displayed after the explosion effect.
                       </p>
+                      <div className="flex items-center gap-4 mt-4">
+                        <span className="text-sm text-gray-600 dark:text-gray-400">Rotation Off</span>
+                        <button
+                          onClick={() => {
+                            setAppState(prev => ({
+                              ...prev,
+                              afterExplosionImageRotationEnabled: !prev.afterExplosionImageRotationEnabled,
+                            }));
+                          }}
+                          className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
+                            appState.afterExplosionImageRotationEnabled ? 'bg-blue-600' : 'bg-gray-300 dark:bg-gray-600'
+                          }`}
+                        >
+                          <span
+                            className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                              appState.afterExplosionImageRotationEnabled ? 'translate-x-6' : 'translate-x-1'
+                            }`}
+                          />
+                        </button>
+                        <span className="text-sm text-gray-600 dark:text-gray-400">Rotation On</span>
+                      </div>
                     </div>
                   )}
                 </div>

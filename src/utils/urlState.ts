@@ -6,8 +6,9 @@ export function encodeState(state: AppState): string {
     timerEnabled: state.timerEnabled,
     timerDuration: state.timerDuration,
     explosionEnabled: state.explosionEnabled,
-    rotatingImageEnabled: state.rotatingImageEnabled,
-    rotatingImageUrl: state.rotatingImageUrl,
+    afterExplosionImageEnabled: state.afterExplosionImageEnabled,
+    afterExplosionImageUrl: state.afterExplosionImageUrl,
+    afterExplosionImageRotationEnabled: state.afterExplosionImageRotationEnabled,
   };
   return btoa(JSON.stringify(shareData));
 }
