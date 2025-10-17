@@ -110,7 +110,7 @@ export default function Timer({ isActive, duration, onComplete, onAutoHide, clas
     setShowConfetti(false);
     setShowAfterExplosionImageOverlay(false);
     afterExplosionImageShownRef.current = false;
-  }, [timeLeft, afterExplosionImageEnabled, afterExplosionImageUrl, showText]);
+  }, [timeLeft, afterExplosionImageEnabled, afterExplosionImageUrl, showText, isActive]);
 
   const formatTime = (seconds: number): string => {
     if (seconds <= 0) return "Time's up!";
@@ -137,12 +137,6 @@ export default function Timer({ isActive, duration, onComplete, onAutoHide, clas
   const shouldShowAfterExplosionImageOverlay = showAfterExplosionImageOverlay && afterExplosionImageEnabled && afterExplosionImageUrl && showText;
   
 
-  // Prevent clicks from bubbling up when overlay is visible
-  const blockOverlayPropagation = useCallback((event: React.SyntheticEvent) => {
-    event.stopPropagation();
-    const nativeEvent = event.nativeEvent as Event & { stopImmediatePropagation?: () => void };
-    nativeEvent.stopImmediatePropagation?.();
-  }, []);
 
   const handleOverlayClick = useCallback((event: React.MouseEvent) => {
     event.preventDefault();
