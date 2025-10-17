@@ -155,13 +155,6 @@ export default function Home() {
     }));
   };
 
-  const clearCompletedTimer = (memberId: string) => {
-    setCompletedTimers(prev => {
-      const newSet = new Set(prev);
-      newSet.delete(memberId);
-      return newSet;
-    });
-  };
 
   const getOrdinalSuffix = (day: number): string => {
     if (day % 100 >= 11 && day % 100 <= 13) return 'th';
@@ -283,7 +276,6 @@ export default function Home() {
               completedTimers={completedTimers}
               onStartTimer={startTimer}
               onStopTimer={stopTimer}
-              onClearCompletedTimer={clearCompletedTimer}
             />
             {allUpdated && (
               <div className="card mt-6">
@@ -342,7 +334,6 @@ export default function Home() {
               completedTimers={completedTimers}
               onStartTimer={startTimer}
               onStopTimer={stopTimer}
-              onClearCompletedTimer={clearCompletedTimer}
             />
           </div>
           {allUpdated && (

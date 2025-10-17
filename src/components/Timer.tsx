@@ -10,7 +10,6 @@ interface TimerProps {
   isActive: boolean;
   duration: number; // in seconds
   onComplete?: () => void;
-  onAutoHide?: () => void; // called when timer auto-hides for last person
   className?: string;
   showText?: boolean; // whether to show countdown text
   isLastPerson?: boolean; // whether this is the last person giving an update
@@ -20,7 +19,7 @@ interface TimerProps {
   afterExplosionImageRotationEnabled?: boolean; // whether the image rotates
 }
 
-export default function Timer({ isActive, duration, onComplete, onAutoHide, className = '', showText = false, isLastPerson = false, explosionEnabled = true, afterExplosionImageEnabled = false, afterExplosionImageUrl = '', afterExplosionImageRotationEnabled = false }: TimerProps) {
+export default function Timer({ isActive, duration, onComplete, className = '', showText = false, isLastPerson = false, explosionEnabled = true, afterExplosionImageEnabled = false, afterExplosionImageUrl = '', afterExplosionImageRotationEnabled = false }: TimerProps) {
   const [timeLeft, setTimeLeft] = useState(duration);
   const [hasCompleted, setHasCompleted] = useState(false);
   const [showExplosion, setShowExplosion] = useState(false);
@@ -64,17 +63,6 @@ export default function Timer({ isActive, duration, onComplete, onAutoHide, clas
     }
   }, [isActive, timeLeft, onComplete, hasCompleted]);
 
-  // Auto-hide timer after 5 seconds if it's the last person
-  useEffect(() => {
-    if (hasCompleted && isLastPerson) {
-      const timeout = setTimeout(() => {
-        setHasCompleted(false);
-        onAutoHide?.(); // Notify parent to remove from completedTimers
-      }, 5000); // Hide after 5 seconds
-      
-      return () => clearTimeout(timeout);
-    }
-  }, [hasCompleted, isLastPerson, onAutoHide]);
 
 
   useEffect(() => {

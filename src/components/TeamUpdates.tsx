@@ -19,7 +19,6 @@ interface TeamUpdatesProps {
   completedTimers: Set<string>;
   onStartTimer: (memberId: string) => void;
   onStopTimer: () => void;
-  onClearCompletedTimer: (memberId: string) => void;
 }
 
 interface AutoScrollingInputProps {
@@ -145,7 +144,7 @@ function AutoScrollingInput({ value, onChange, placeholder, className, overlayTe
   );
 }
 
-export default function TeamUpdates({ teamMembers, onUpdateMember, blinkingMembers, setBlinkingMembers, timerEnabled, explosionEnabled, afterExplosionImageEnabled, afterExplosionImageUrl, afterExplosionImageRotationEnabled, activeTimer, completedTimers, onStartTimer, onStopTimer, onClearCompletedTimer }: TeamUpdatesProps) {
+export default function TeamUpdates({ teamMembers, onUpdateMember, blinkingMembers, setBlinkingMembers, timerEnabled, explosionEnabled, afterExplosionImageEnabled, afterExplosionImageUrl, afterExplosionImageRotationEnabled, activeTimer, completedTimers, onStartTimer, onStopTimer }: TeamUpdatesProps) {
   const enabledMembers = teamMembers.filter(member => member.enabled);
   const updatedMembers = enabledMembers.filter(member => member.updateGiven);
   
@@ -254,7 +253,6 @@ export default function TeamUpdates({ teamMembers, onUpdateMember, blinkingMembe
                         isActive={activeTimer?.memberId === member.id}
                         duration={activeTimer?.duration || 120}
                         onComplete={onStopTimer}
-                        onAutoHide={() => onClearCompletedTimer(member.id)}
                         className=""
                         explosionEnabled={explosionEnabled}
                         afterExplosionImageEnabled={false}
@@ -281,7 +279,6 @@ export default function TeamUpdates({ teamMembers, onUpdateMember, blinkingMembe
                         isActive={activeTimer?.memberId === member.id}
                         duration={activeTimer?.duration || 120}
                         onComplete={onStopTimer}
-                        onAutoHide={() => onClearCompletedTimer(member.id)}
                         showText={true}
                         explosionEnabled={explosionEnabled}
                         afterExplosionImageEnabled={activeTimer?.memberId === member.id ? afterExplosionImageEnabled : false}
