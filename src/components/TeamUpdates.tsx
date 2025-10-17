@@ -148,19 +148,6 @@ export default function TeamUpdates({ teamMembers, onUpdateMember, blinkingMembe
   const enabledMembers = teamMembers.filter(member => member.enabled);
   const updatedMembers = enabledMembers.filter(member => member.updateGiven);
   
-  // Check if this member is the last one to give an update
-  const isLastPerson = (memberId: string) => {
-    const currentMember = enabledMembers.find(m => m.id === memberId);
-    if (!currentMember) return false;
-    
-    // Count how many other members have given updates
-    const otherMembersUpdated = enabledMembers
-      .filter(m => m.id !== memberId)
-      .filter(m => m.updateGiven).length;
-    
-    // This is the last person if all other members have given updates
-    return otherMembersUpdated === enabledMembers.length - 1;
-  };
 
   const handleBlockerChange = (id: string, blocker: string) => {
     onUpdateMember(id, { blocker, updateGiven: true });
@@ -258,7 +245,6 @@ export default function TeamUpdates({ teamMembers, onUpdateMember, blinkingMembe
                         afterExplosionImageEnabled={false}
                         afterExplosionImageUrl=""
                         afterExplosionImageRotationEnabled={false}
-                        isLastPerson={isLastPerson(member.id)}
                       />
                     </div>
                   )}
@@ -284,7 +270,6 @@ export default function TeamUpdates({ teamMembers, onUpdateMember, blinkingMembe
                         afterExplosionImageEnabled={activeTimer?.memberId === member.id ? afterExplosionImageEnabled : false}
                         afterExplosionImageUrl={activeTimer?.memberId === member.id ? afterExplosionImageUrl : ""}
                         afterExplosionImageRotationEnabled={activeTimer?.memberId === member.id ? afterExplosionImageRotationEnabled : false}
-                        isLastPerson={isLastPerson(member.id)}
                       />
                     </div>
                   )}

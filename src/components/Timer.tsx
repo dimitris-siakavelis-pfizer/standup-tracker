@@ -12,14 +12,13 @@ interface TimerProps {
   onComplete?: () => void;
   className?: string;
   showText?: boolean; // whether to show countdown text
-  isLastPerson?: boolean; // whether this is the last person giving an update
   explosionEnabled?: boolean; // whether to show full-viewport explosion
   afterExplosionImageEnabled?: boolean; // whether to show image after explosion
   afterExplosionImageUrl?: string; // URL of the image
   afterExplosionImageRotationEnabled?: boolean; // whether the image rotates
 }
 
-export default function Timer({ isActive, duration, onComplete, className = '', showText = false, isLastPerson = false, explosionEnabled = true, afterExplosionImageEnabled = false, afterExplosionImageUrl = '', afterExplosionImageRotationEnabled = false }: TimerProps) {
+export default function Timer({ isActive, duration, onComplete, className = '', showText = false, explosionEnabled = true, afterExplosionImageEnabled = false, afterExplosionImageUrl = '', afterExplosionImageRotationEnabled = false }: TimerProps) {
   const [timeLeft, setTimeLeft] = useState(duration);
   const [hasCompleted, setHasCompleted] = useState(false);
   const [showExplosion, setShowExplosion] = useState(false);
