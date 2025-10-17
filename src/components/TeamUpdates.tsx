@@ -249,13 +249,6 @@ export default function TeamUpdates({ teamMembers, onUpdateMember, blinkingMembe
                   } ${blinkingMembers.has(member.id) ? 'scale-150 bg-green-600' : ''}`}></div>
                   {timerEnabled && (activeTimer?.memberId === member.id || completedTimers.has(member.id)) && (
                     <div className="absolute -inset-2">
-                      {console.log('🎯 TeamUpdates: Rendering circular timer for member', {
-                        memberId: member.id,
-                        memberName: member.name,
-                        isActive: activeTimer?.memberId === member.id,
-                        isCompleted: completedTimers.has(member.id),
-                        afterExplosionImageEnabled: false
-                      })}
                       <Timer
                         key={`circular-timer-${member.id}`}
                         isActive={activeTimer?.memberId === member.id}
@@ -268,7 +261,6 @@ export default function TeamUpdates({ teamMembers, onUpdateMember, blinkingMembe
                         afterExplosionImageUrl=""
                         afterExplosionImageRotationEnabled={false}
                         isLastPerson={isLastPerson(member.id)}
-                        data-timer-type="circular"
                       />
                     </div>
                   )}
@@ -284,13 +276,6 @@ export default function TeamUpdates({ teamMembers, onUpdateMember, blinkingMembe
                   </h3>
                   {timerEnabled && (activeTimer?.memberId === member.id || completedTimers.has(member.id)) && (
                     <div className="mt-1">
-                      {console.log('🎯 TeamUpdates: Rendering text timer for member', {
-                        memberId: member.id,
-                        memberName: member.name,
-                        isActive: activeTimer?.memberId === member.id,
-                        isCompleted: completedTimers.has(member.id),
-                        afterExplosionImageEnabled: activeTimer?.memberId === member.id ? afterExplosionImageEnabled : false
-                      })}
                       <Timer
                         key={`text-timer-${member.id}`}
                         isActive={activeTimer?.memberId === member.id}
@@ -303,7 +288,6 @@ export default function TeamUpdates({ teamMembers, onUpdateMember, blinkingMembe
                         afterExplosionImageUrl={activeTimer?.memberId === member.id ? afterExplosionImageUrl : ""}
                         afterExplosionImageRotationEnabled={activeTimer?.memberId === member.id ? afterExplosionImageRotationEnabled : false}
                         isLastPerson={isLastPerson(member.id)}
-                        data-timer-type="text"
                       />
                     </div>
                   )}

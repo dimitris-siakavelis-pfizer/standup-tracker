@@ -18,10 +18,9 @@ interface TimerProps {
   afterExplosionImageEnabled?: boolean; // whether to show image after explosion
   afterExplosionImageUrl?: string; // URL of the image
   afterExplosionImageRotationEnabled?: boolean; // whether the image rotates
-  'data-timer-type'?: string; // for debugging
 }
 
-export default function Timer({ isActive, duration, onComplete, onAutoHide, className = '', showText = false, isLastPerson = false, explosionEnabled = true, afterExplosionImageEnabled = false, afterExplosionImageUrl = '', afterExplosionImageRotationEnabled = false, 'data-timer-type': timerType = 'unknown' }: TimerProps) {
+export default function Timer({ isActive, duration, onComplete, onAutoHide, className = '', showText = false, isLastPerson = false, explosionEnabled = true, afterExplosionImageEnabled = false, afterExplosionImageUrl = '', afterExplosionImageRotationEnabled = false }: TimerProps) {
   const [timeLeft, setTimeLeft] = useState(duration);
   const [hasCompleted, setHasCompleted] = useState(false);
   const [showExplosion, setShowExplosion] = useState(false);
@@ -29,8 +28,6 @@ export default function Timer({ isActive, duration, onComplete, onAutoHide, clas
   const [showAfterExplosionImageOverlay, setShowAfterExplosionImageOverlay] = useState(false);
   const afterExplosionImageShownRef = useRef(false);
   
-  // Create a unique ID for this timer instance
-  const timerId = useRef(`${timerType}-${Date.now()}-${Math.random()}`);
 
   useEffect(() => {
     if (!isActive) {
@@ -95,20 +92,9 @@ export default function Timer({ isActive, duration, onComplete, onAutoHide, clas
       let t3: ReturnType<typeof setTimeout> | undefined;
 
       if (afterExplosionImageEnabled && afterExplosionImageUrl && showText && isActive && !afterExplosionImageShownRef.current && !globalAfterExplosionShown) {
-        console.log('🎯 Timer: Setting up after-explosion image', {
-          timerId: timerId.current,
-          timerType,
-          afterExplosionImageEnabled,
-          afterExplosionImageUrl,
-          showText,
-          isActive,
-          timeLeft,
-          memberId: 'unknown' // We'll add this later
-        });
         afterExplosionImageShownRef.current = true;
         globalAfterExplosionShown = true;
         t3 = setTimeout(() => {
-          console.log('🎯 Timer: Showing after-explosion image overlay', { timerId: timerId.current, timerType });
           setShowAfterExplosionImageOverlay(true);
         }, overlayDelay);
       }
@@ -150,18 +136,6 @@ export default function Timer({ isActive, duration, onComplete, onAutoHide, clas
   const shouldShowOverlay = showExplosion && explosionEnabled && showText;
   const shouldShowAfterExplosionImageOverlay = showAfterExplosionImageOverlay && afterExplosionImageEnabled && afterExplosionImageUrl && showText;
   
-  // Debug logging for overlay state
-  useEffect(() => {
-    if (shouldShowAfterExplosionImageOverlay) {
-      console.log('🎯 Timer: Overlay should be visible', {
-        showAfterExplosionImageOverlay,
-        afterExplosionImageEnabled,
-        afterExplosionImageUrl,
-        showText,
-        isActive
-      });
-    }
-  }, [shouldShowAfterExplosionImageOverlay, showAfterExplosionImageOverlay, afterExplosionImageEnabled, afterExplosionImageUrl, showText, isActive]);
 
   // Prevent clicks from bubbling up when overlay is visible
   const blockOverlayPropagation = useCallback((event: React.SyntheticEvent) => {
@@ -171,14 +145,13 @@ export default function Timer({ isActive, duration, onComplete, onAutoHide, clas
   }, []);
 
   const handleOverlayClick = useCallback((event: React.MouseEvent) => {
-    console.log('🎯 Timer: Overlay clicked, dismissing', { timerId: timerId.current, timerType });
     event.preventDefault();
     event.stopPropagation();
     const nativeEvent = event.nativeEvent as Event & { stopImmediatePropagation?: () => void };
     nativeEvent.stopImmediatePropagation?.();
     setShowAfterExplosionImageOverlay(false);
     globalAfterExplosionShown = false;
-  }, [timerType]);
+  }, []);
 
   const overlayConfettiPieces = useMemo(() => {
     if (!shouldShowOverlay) return [] as Array<{ tx: number; ty: number; size: number; color: string }>;
