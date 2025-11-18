@@ -147,6 +147,9 @@ function AutoScrollingInput({ value, onChange, placeholder, className, overlayTe
 export default function TeamUpdates({ teamMembers, onUpdateMember, blinkingMembers, setBlinkingMembers, timerEnabled, explosionEnabled, afterExplosionImageEnabled, afterExplosionImageUrl, afterExplosionImageRotationEnabled, activeTimer, completedTimers, onStartTimer, onStopTimer }: TeamUpdatesProps) {
   const enabledMembers = teamMembers.filter(member => member.enabled);
   const updatedMembers = enabledMembers.filter(member => member.updateGiven);
+  const membersWithoutUpdate = enabledMembers.filter(member => 
+    !member.updateGiven && member.id !== activeTimer?.memberId
+  );
   
 
   const handleBlockerChange = (id: string, blocker: string) => {
@@ -270,6 +273,8 @@ export default function TeamUpdates({ teamMembers, onUpdateMember, blinkingMembe
                         afterExplosionImageEnabled={activeTimer?.memberId === member.id ? afterExplosionImageEnabled : false}
                         afterExplosionImageUrl={activeTimer?.memberId === member.id ? afterExplosionImageUrl : ""}
                         afterExplosionImageRotationEnabled={activeTimer?.memberId === member.id ? afterExplosionImageRotationEnabled : false}
+                        teamMembersWithoutUpdate={activeTimer?.memberId === member.id ? membersWithoutUpdate : []}
+                        currentMemberName={activeTimer?.memberId === member.id ? member.name : ''}
                       />
                     </div>
                   )}

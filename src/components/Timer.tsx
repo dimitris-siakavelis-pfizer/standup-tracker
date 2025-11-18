@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import { createPortal } from 'react-dom';
+import { TeamMember } from '@/types';
 
 // Global state to track if any after-explosion image is currently shown
 let globalAfterExplosionShown = false;
@@ -16,9 +17,11 @@ interface TimerProps {
   afterExplosionImageEnabled?: boolean; // whether to show image after explosion
   afterExplosionImageUrl?: string; // URL of the image
   afterExplosionImageRotationEnabled?: boolean; // whether the image rotates
+  teamMembersWithoutUpdate?: TeamMember[]; // team members who haven't provided updates
+  currentMemberName?: string; // name of the person whose timer is active
 }
 
-export default function Timer({ isActive, duration, onComplete, className = '', showText = false, explosionEnabled = true, afterExplosionImageEnabled = false, afterExplosionImageUrl = '', afterExplosionImageRotationEnabled = false }: TimerProps) {
+export default function Timer({ isActive, duration, onComplete, className = '', showText = false, explosionEnabled = true, afterExplosionImageEnabled = false, afterExplosionImageUrl = '', afterExplosionImageRotationEnabled = false, teamMembersWithoutUpdate = [], currentMemberName = '' }: TimerProps) {
   const [timeLeft, setTimeLeft] = useState(duration);
   const [hasCompleted, setHasCompleted] = useState(false);
   const [showExplosion, setShowExplosion] = useState(false);
@@ -123,7 +126,50 @@ export default function Timer({ isActive, duration, onComplete, className = '', 
   const shouldShowOverlay = showExplosion && explosionEnabled && showText;
   const shouldShowAfterExplosionImageOverlay = showAfterExplosionImageOverlay && afterExplosionImageEnabled && afterExplosionImageUrl && showText;
   
-
+  const formatMembersText = useCallback((members: TeamMember[], personName: string): React.ReactNode => {
+    if (members.length === 0) {
+      return (
+        <>
+          {personName}, time's up!<br />
+          <br />
+          Everyone has provided an update!
+        </>
+      );
+    }
+    
+    const names = members.map(m => m.name);
+    
+    if (names.length === 1) {
+      return (
+        <>
+          {personName}, time's up!<br />
+          <br />
+          Please pass to:<br />
+          {names[0]}
+        </>
+      );
+    } else if (names.length === 2) {
+      return (
+        <>
+          {personName}, time's up!<br />
+          <br />
+          Please pass to:<br />
+          {names[0]} or {names[1]}
+        </>
+      );
+    } else {
+      const allButLast = names.slice(0, -1).join(', ');
+      const last = names[names.length - 1];
+      return (
+        <>
+          {personName}, time's up!<br />
+          <br />
+          Please pass to:<br />
+          {allButLast} or {last}
+        </>
+      );
+    }
+  }, []);
 
   const handleOverlayClick = useCallback((event: React.MouseEvent) => {
     event.preventDefault();
@@ -201,7 +247,7 @@ export default function Timer({ isActive, duration, onComplete, className = '', 
           className="fixed left-0 top-0 w-full h-full z-[9999] pointer-events-auto cursor-pointer"
           onClick={handleOverlayClick}
         >
-          <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+          <div className="absolute inset-0 bg-black bg-opacity-50 flex flex-col items-center justify-center">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img 
               src={afterExplosionImageUrl} 
@@ -209,6 +255,9 @@ export default function Timer({ isActive, duration, onComplete, className = '', 
               className={`max-w-80 max-h-80 ${afterExplosionImageRotationEnabled ? 'animate-spin' : ''}`}
               style={afterExplosionImageRotationEnabled ? { animationDuration: '2s' } : undefined}
             />
+            <p className="mt-6 text-white text-xl font-semibold text-center px-4 max-w-md" style={{ textShadow: '2px 2px 4px rgba(0, 0, 0, 0.8), 0 0 8px rgba(0, 0, 0, 0.5)' }}>
+              {formatMembersText(teamMembersWithoutUpdate, currentMemberName)}
+            </p>
           </div>
         </div>,
         document.body
