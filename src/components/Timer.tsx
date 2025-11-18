@@ -130,7 +130,7 @@ export default function Timer({ isActive, duration, onComplete, className = '', 
     if (members.length === 0) {
       return (
         <>
-          {personName}, time's up!<br />
+          {personName}, time&apos;s up!<br />
           <br />
           Everyone has provided an update!
         </>
@@ -142,7 +142,7 @@ export default function Timer({ isActive, duration, onComplete, className = '', 
     if (names.length === 1) {
       return (
         <>
-          {personName}, time's up!<br />
+          {personName}, time&apos;s up!<br />
           <br />
           Please pass to:<br />
           {names[0]}
@@ -151,7 +151,7 @@ export default function Timer({ isActive, duration, onComplete, className = '', 
     } else if (names.length === 2) {
       return (
         <>
-          {personName}, time's up!<br />
+          {personName}, time&apos;s up!<br />
           <br />
           Please pass to:<br />
           {names[0]} or {names[1]}
@@ -162,7 +162,7 @@ export default function Timer({ isActive, duration, onComplete, className = '', 
       const last = names[names.length - 1];
       return (
         <>
-          {personName}, time's up!<br />
+          {personName}, time&apos;s up!<br />
           <br />
           Please pass to:<br />
           {allButLast} or {last}
