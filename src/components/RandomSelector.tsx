@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { TeamMember } from '@/types';
 
 interface RandomSelectorProps {
@@ -22,6 +22,12 @@ export default function RandomSelector({
   const [animationInterval, setAnimationInterval] = useState<NodeJS.Timeout | null>(null);
 
   const enabledMembers = teamMembers.filter(member => member.enabled);
+  
+  // Use a ref to always access the current enabledMembers in callbacks
+  const enabledMembersRef = useRef(enabledMembers);
+  useEffect(() => {
+    enabledMembersRef.current = enabledMembers;
+  }, [enabledMembers]);
 
   const startRandomSelection = () => {
     if (enabledMembers.length === 0) return;
@@ -30,8 +36,9 @@ export default function RandomSelector({
     
     // Start the animation
     const interval = setInterval(() => {
-      const randomIndex = Math.floor(Math.random() * enabledMembers.length);
-      setDisplayName(enabledMembers[randomIndex].name);
+      const currentMembers = enabledMembersRef.current;
+      const randomIndex = Math.floor(Math.random() * currentMembers.length);
+      setDisplayName(currentMembers[randomIndex].name);
     }, 100);
     
     setAnimationInterval(interval);
@@ -43,7 +50,9 @@ export default function RandomSelector({
         setAnimationInterval(null);
       }
       
-      const winner = enabledMembers[Math.floor(Math.random() * enabledMembers.length)];
+      // Use ref to get current enabledMembers, avoiding stale closure
+      const currentMembers = enabledMembersRef.current;
+      const winner = currentMembers[Math.floor(Math.random() * currentMembers.length)];
       onStopSelection(winner);
       setDisplayName(winner.name);
     }, 4000);

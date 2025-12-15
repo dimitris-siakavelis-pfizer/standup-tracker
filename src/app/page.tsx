@@ -72,6 +72,16 @@ export default function Home() {
     }));
   };
 
+  // Fisher-Yates shuffle algorithm for proper randomization
+  const shuffleArray = <T,>(array: T[]): T[] => {
+    const shuffled = [...array];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
+  };
+
   const startSelection = () => {
     // Clear any active timer when starting new selection
     if (appState.activeTimer) {
@@ -82,12 +92,11 @@ export default function Home() {
       ...prev,
       isSelecting: true,
       activeTimer: null, // Clear active timer
-      teamMembers: prev.teamMembers.map(member => ({
+      teamMembers: shuffleArray(prev.teamMembers.map(member => ({
         ...member,
         updateGiven: false,
         blocker: undefined,
-      }))
-      .sort(() => Math.random() - 0.5), // Randomize the order
+      }))),
     }));
   };
 
